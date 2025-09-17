@@ -161,26 +161,46 @@ def enhance_uml_for_large_fonts(uml_content):
         for line in lines:
             if line.strip().startswith('@startuml'):
                 enhanced_lines.append(line)
-                # Add skinparam for larger fonts
+                # Add aggressive skinparam for larger fonts - override any existing styling
                 enhanced_lines.append('')
                 enhanced_lines.append('!theme plain')
-                enhanced_lines.append('skinparam defaultFontSize 14')
-                enhanced_lines.append('skinparam classFontSize 16')
-                enhanced_lines.append('skinparam packageFontSize 18')
-                enhanced_lines.append('skinparam titleFontSize 20')
-                enhanced_lines.append('skinparam stereotypeFontSize 12')
-                enhanced_lines.append('skinparam noteFontSize 12')
-                enhanced_lines.append('skinparam legendFontSize 12')
-                enhanced_lines.append('skinparam footerFontSize 10')
-                enhanced_lines.append('skinparam headerFontSize 10')
-                enhanced_lines.append('skinparam minClassWidth 120')
+                enhanced_lines.append('')
+                enhanced_lines.append('skinparam dpi 150')
+                enhanced_lines.append('skinparam defaultFontSize 16')
+                enhanced_lines.append('skinparam classFontSize 18')
+                enhanced_lines.append('skinparam packageFontSize 20')
+                enhanced_lines.append('skinparam titleFontSize 24')
+                enhanced_lines.append('skinparam stereotypeFontSize 14')
+                enhanced_lines.append('skinparam noteFontSize 14')
+                enhanced_lines.append('skinparam legendFontSize 14')
+                enhanced_lines.append('skinparam footerFontSize 12')
+                enhanced_lines.append('skinparam headerFontSize 12')
+                enhanced_lines.append('')
+                enhanced_lines.append('skinparam minClassWidth 140')
                 enhanced_lines.append('skinparam packageStyle rectangle')
                 enhanced_lines.append('skinparam backgroundColor white')
                 enhanced_lines.append('skinparam classBackgroundColor white')
                 enhanced_lines.append('skinparam packageBackgroundColor white')
                 enhanced_lines.append('')
+                enhanced_lines.append('skinparam class {')
+                enhanced_lines.append('    FontSize 18')
+                enhanced_lines.append('    FontStyle bold')
+                enhanced_lines.append('}')
+                enhanced_lines.append('')
+                enhanced_lines.append('skinparam package {')
+                enhanced_lines.append('    FontSize 20')
+                enhanced_lines.append('    FontStyle bold')
+                enhanced_lines.append('}')
+                enhanced_lines.append('')
                 print("✅ Added skinparam font configurations")
             else:
+                # Skip any existing theme or layout commands that might interfere
+                line_stripped = line.strip()
+                if (line_stripped.startswith('!define LAYOUT') or 
+                    line_stripped.startswith('!theme') or
+                    line_stripped.startswith('skinparam')):
+                    print(f"🚫 Skipping existing styling command: {line_stripped}")
+                    continue
                 enhanced_lines.append(line)
         
         result = '\n'.join(enhanced_lines)

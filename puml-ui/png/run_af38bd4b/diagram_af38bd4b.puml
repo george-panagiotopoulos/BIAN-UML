@@ -1,0 +1,42 @@
+@startuml BIAN Marketing & Sales
+
+title BIAN Marketing & Sales Domains
+
+left to right direction
+
+package "Marketing" as MARKETING {
+  class "Marketing Services" as MKT {
+    Business Development
+    Brand Management
+    Advertising
+    Promotional Events
+    Prospect Campaign Design
+    Customer Campaign Management
+    Customer Campaign Design
+    Customer Surveys
+    Prospect Campaign Management
+  }
+}
+
+package "Sales" as SALES {
+  class "Sales Services" as SALES_SVC {
+    Prospect Campaign Execution
+    Party Lifecycle Management
+    Lead and Opportunity Management
+    Customer Campaign Execution
+    Customer Offer
+    Sales Planning
+    Underwriting
+    Commission Agreement
+    Commissions
+    Product Matching
+    Product Expert Sales Support
+    Product Sales Support
+    Sales Product
+  }
+}
+
+' Position for more compact layout
+MARKETING -[hidden]down- SALES
+
+@enduml
