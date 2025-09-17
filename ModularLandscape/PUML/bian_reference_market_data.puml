@@ -59,6 +59,7 @@ together {
       <color:#0000FF>Product Directory (Product Catalogue)</color>
       <color:#0000FF>Special Pricing Conditions (Pricing)</color>
     }
+    note right of PROD : <color:#FF0000>Available standalone - full modular architecture PI5/PI6</color>
   }
 }
 
