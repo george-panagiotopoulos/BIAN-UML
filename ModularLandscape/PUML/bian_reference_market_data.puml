@@ -42,11 +42,12 @@ together {
     }
 
     class "Financial Instruments" as INSTRUMENTS {
-      Financial Instrument Reference Data Management
+      <color:#0000FF>Financial Instrument Reference Data Management</color>
       Counterparty Administration
-      Public Reference Data Management
-      Location Data Management
+      <color:#0000FF>Public Reference Data Management</color>
+      <color:#0000FF>Location Data Management</color>
     }
+      note right of INSTRUMENTS : <color:#FF0000>Proxy service MVP PI4/PI5</color>
   }
 
   package "Product Management" as PRODUCT_MGMT {

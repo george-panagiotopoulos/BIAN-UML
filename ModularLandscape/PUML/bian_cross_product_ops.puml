@@ -7,7 +7,7 @@ title BIAN Cross Product Operations Domains
 ' Row 1
 together {
   package "Payments" as PAYMENTS {
-    class "Payment Services" as PAY {
+    class "Payment Services <color:#0000FF>(Temenos: Payments Hub)</color>" as PAY {
       <color:#0000FF>Payment Order</color>
       <color:#0000FF>Payment Execution</color>
       <color:#0000FF>Financial Message Analysis</color>

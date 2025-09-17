@@ -14,6 +14,7 @@ together {
       Investment Account
       eTrading Workbench
     }
+    note right of INVEST : <color:#FF0000>Future (beyond 2027)</color>
   }
 
   package "Wholesale Trading" as WHOLESALE {
@@ -31,6 +32,7 @@ together {
       Market Order
       Market Order Execution
     }
+    note right of TRADING : <color:#FF0000>Future (beyond 2027)</color>
   }
 }
 
@@ -50,6 +52,7 @@ package "Market Operations" as MARKET_OPS {
     Trade Clearing
     Trade Settlement
   }
+  note right of MKT_OPS : <color:#FF0000>Future (beyond 2027)</color>
 }
 
 ' Layout positioning

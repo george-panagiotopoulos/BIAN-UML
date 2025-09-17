@@ -16,6 +16,7 @@ together {
       Asset Securitization
       Asset And Liability Management
     }
+    note right of TREASURY : <color:#FF0000>Future (beyond 2027)</color>
   }
 
   package "Business Analysis" as ANALYSIS {

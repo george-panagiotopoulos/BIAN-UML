@@ -43,6 +43,7 @@ together {
       Corporate Payroll Services
       Fiduciary Agreement
     }
+    note right of CORP : <color:#FF0000>Pilot PI3, MVP PI4/PI5</color>
   }
 
   package "Corporate Lending" as CORP_LENDING_PKG {
@@ -53,6 +54,7 @@ together {
       Corporate Lease
       Loan Syndication
     }
+    note right of CORP_LENDING : <color:#FF0000>MVP PI5/PI6</color>
   }
 }
 
@@ -68,6 +70,7 @@ together {
       Credit Facility
       Limit and Exposure Management
     }
+    note right of LIMITS_COLLATERAL : <color:#FF0000>Future (beyond 2027)</color>
   }
 
   package "Cards" as CARDS {
