@@ -1,0 +1,61 @@
+@startuml BIAN Channel Domains
+
+title BIAN Channel Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "Channel Specific" as CHANNEL_SPECIFIC {
+    class "Digital Channels" as DIGITAL {
+      eBranch Management
+      eBranch Operations
+      Advanced Voice Services Management
+      Advanced Voice Services Operations
+      Card Terminal Administration
+      Card Terminal Operation
+    }
+
+    class "Branch Operations" as BRANCH {
+      Branch Location Management
+      Branch Network Management
+      Branch Location Operations
+      Branch Currency Management
+      Branch Currency Distribution
+      Product Inventory Item Management
+      Product Inventory Distribution
+    }
+
+    class "ATM Operations" as ATM {
+      ATM Network Management
+      ATM Network Operations
+    }
+
+    class "Contact Center" as CONTACT {
+      Contact Center Management
+      Contact Center Operations
+    }
+  }
+}
+
+' Row 2
+package "Cross Channel" as CROSS_CHANNEL {
+  class "Cross Channel Services" as CROSS_CHAN {
+    Party Authentication
+    Transaction Authorization
+    Point of Service
+    Servicing Event History
+    Contact Routing
+    Session Dialogue
+    Interactive Help
+    Contact Handler
+    Customer Workbench
+    Servicing Activity Analysis
+    Service Directory
+  }
+}
+
+' Layout positioning
+CHANNEL_SPECIFIC -[hidden]down- CROSS_CHANNEL
+
+@enduml

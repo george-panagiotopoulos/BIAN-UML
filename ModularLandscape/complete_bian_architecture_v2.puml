@@ -1,0 +1,678 @@
+@startuml Complete BIAN Banking Architecture V2 - Comprehensive Service Domain Mapping
+
+!define RETAIL_COLOR #4A90E2
+!define CORPORATE_COLOR #2E8B57
+!define WEALTH_COLOR #9932CC
+!define CUSTOMER_COLOR #7ED321
+!define RISK_COLOR #F5A623
+!define FINANCE_COLOR #FF8C00
+!define DIGITAL_COLOR #50E3C2
+!define CLIENT_EXP_COLOR #FF69B4
+!define EXTERNAL_COLOR #9013FE
+!define NOT_IMPLEMENTED #FF0000
+!define PRIORITY_COLOR #FFD700
+!define BLACK_COLOR #000000
+
+title Banking Architecture - Complete BIAN Service Domain Mapping (V12.0)
+
+!define LAYOUT top to bottom direction
+
+' Digital Banking & Originations (Top Row) - NON-FOCUS
+package "Digital Banking & Originations" as DIGITAL {
+
+  class "DigitalChannels" as DIGITAL_CHAN DIGITAL_COLOR {
+    **BIAN Business Area:** Sales and Service
+    **BIAN Business Domain:** Channel Specific
+    **Service Domains:**
+    --
+    + eBranch Management: online banking platform
+    + eBranch Operations: online banking services
+    + Advanced Voice Services Management: voice banking admin
+    + Advanced Voice Services Operations: voice banking services
+    + <color:NOT_IMPLEMENTED>Card Terminal Administration</color>
+    + <color:NOT_IMPLEMENTED>Card Terminal Operation</color>
+    --
+    + Party Authentication: identity verification
+    + Transaction Authorization: transaction approval
+    + Servicing Event History: transaction history
+    + Interactive Help: digital assistance
+    + Contact Handler: service routing
+    + Session Dialogue: conversation management
+  }
+
+  class "OriginationsOnboarding" as ORIGINATIONS DIGITAL_COLOR {
+    **BIAN Business Area:** Sales and Service
+    **BIAN Business Domain:** Sales
+    **Service Domains:**
+    --
+    + Party Lifecycle Management: customer lifecycle
+    + Lead and Opportunity Management: lead processing
+    + Customer Offer: offer management
+    + Sales Planning: sales strategy
+    + Underwriting: risk assessment
+    + Commission Agreement: commission setup
+    + Commissions: commission processing
+    --
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Consumer Services
+    --
+    + Customer Tax Handling: tax services
+    + Consumer Advisory Services: financial advice
+    + Consumer Investments: investment services
+    + Brokered Product: product brokering
+    + Trust Services: trust management
+    + Currency Exchange: fx services
+    + Bank Drafts: draft services
+  }
+}
+
+' Client & Employee Experience (Top Row) - NON-FOCUS
+package "Client & Employee Experience" as CLIENT_EXP {
+
+  class "BranchOperations" as BRANCH CLIENT_EXP_COLOR {
+    **BIAN Business Area:** Sales and Service
+    **BIAN Business Domain:** Channel Specific
+    **Service Domains:**
+    --
+    + Branch Location Management: branch administration
+    + Branch Network Management: network oversight
+    + Branch Location Operations: branch services
+    + Branch Currency Management: cash operations
+    + Branch Currency Distribution: cash distribution
+    + Product Inventory Item Management: inventory admin
+    + Product Inventory Distribution: inventory distribution
+    --
+    + ATM Network Management: atm administration
+    + ATM Network Operations: atm services
+    --
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Operational Services
+    --
+    + Issued Device Tracking: device monitoring
+    + Issued Device Administration: device management
+    + Channel Activity History: activity logging
+    + Channel Activity Analysis: activity analytics
+  }
+
+  class "ContactCenter" as CONTACT CLIENT_EXP_COLOR {
+    **BIAN Business Area:** Sales and Service
+    **BIAN Business Domain:** Channel Specific
+    **Service Domains:**
+    --
+    + Contact Center Management: contact center admin
+    + Contact Center Operations: contact center services
+    --
+    **BIAN Business Domain:** Servicing
+    --
+    + Servicing Issue: issue management
+    + Customer Case Management: case handling
+    + Case Root Cause Analysis: problem analysis
+    + Customer Case: case processing
+    + Servicing Order: service orders
+    + Servicing Mandate: service authorization
+    + Payment Initiation: payment setup
+  }
+}
+
+' Retail Core & Payments (Middle Row) - FOCUS AREA
+package "Retail Core & Payments" as RETAIL {
+
+  class "DepositsAccounts" as DEP RETAIL_COLOR {
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Product Specific Fulfillment
+    **Service Domains:**
+    --
+    + Current Account: current account management
+    + Savings Account: savings account management
+    + Term Deposit: fixed deposit management
+    + Term Deposit Framework Agreement: deposit agreements
+    + Standing Order: standing order management
+    + Virtual Account: virtual account services
+    + <color:NOT_IMPLEMENTED>Certificate of Deposit</color>
+    + <color:NOT_IMPLEMENTED>Notice Account</color>
+    --
+    **BIAN Business Domain:** Account Management
+    --
+    + Position Management: account positions
+    + Position Keeping: position maintenance
+    + Customer Position: customer positions
+    + Account Reconciliation: reconciliation services
+    + Internal Bank Account: internal accounts
+    --
+    **BIAN Business Domain:** Operational Services
+    --
+    + Open Item Management: item processing
+    + Disbursement: payment disbursement
+    + Customer Billing: billing services
+  }
+
+  class "RetailLending" as LENDING RETAIL_COLOR {
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Product Specific Fulfillment
+    **Service Domains:**
+    --
+    + Consumer Loan: personal loan management
+    + Mortgage Loan: mortgage management
+    + Merchandising Loan: merchandising loans
+    + Leasing: leasing services
+    + Leasing Item Administration: lease administration
+    + <color:NOT_IMPLEMENTED>Loan Origination</color>
+    --
+    **BIAN Business Domain:** Collateral Administration
+    --
+    + Collections: collection services
+    + Collateral Asset Administration: asset management
+    + Collateral Allocation Management: allocation management
+    + Party Asset Directory: asset directory
+    --
+    **BIAN Business Domain:** Operational Services
+    --
+    + Delinquent Account Handling: delinquency management
+    + Card Collections: card collections
+  }
+
+  class "LimitsCollateral" as LIMITS RETAIL_COLOR {
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Cross Product Operations
+    **Service Domains:**
+    --
+    + Credit Management: credit administration
+    + Credit Facility: credit facility management
+    + Limit and Exposure Management: limit management
+    --
+    **BIAN Business Area:** Risk and Compliance
+    **BIAN Business Domain:** Models
+    --
+    + Credit Risk Models: credit risk modeling
+    + Credit and Margin Management: margin management
+    --
+    **BIAN Business Domain:** Collateral Administration
+    --
+    + <color:NOT_IMPLEMENTED>Guarantee Management</color>
+    + <color:NOT_IMPLEMENTED>Exposure Management</color>
+    + <color:NOT_IMPLEMENTED>Collateral Valuation</color>
+    + Collateral Asset Administration: asset administration
+  }
+
+  class "PaymentsTransfers" as PAYMENTS RETAIL_COLOR {
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Cross Product Operations
+    **Service Domains:**
+    --
+    + Payment Order: payment instruction
+    + Payment Execution: payment processing
+    + Funds Transfer: transfer services
+    --
+    **BIAN Business Domain:** Payments
+    --
+    + Financial Message Analysis: message processing
+    + Financial Gateway: payment gateway
+    + Central Cash Handling: cash management
+    + Correspondent Bank Operations: correspondent services
+    + Payment Rail Operations: payment rails
+    + <color:NOT_IMPLEMENTED>ACH Operations</color>
+    + <color:NOT_IMPLEMENTED>Wire Transfer</color>
+    + <color:NOT_IMPLEMENTED>Payment Gateway</color>
+    --
+    **BIAN Business Domain:** Cards
+    --
+    + Card Financial Settlement: card settlement
+    + Card eCommerce Gateway: ecommerce gateway
+    + Card Clearing: card clearing
+  }
+
+  class "ProductPricing" as PRODUCT RETAIL_COLOR {
+    **BIAN Business Area:** Reference Data
+    **BIAN Business Domain:** Product Management
+    **Service Domains:**
+    --
+    + Product Design: product creation
+    + Product Deployment: product rollout
+    + Product Training: product training
+    + Product Quality Assurance: quality control
+    + Product Directory: product catalog
+    + Discount Pricing: pricing strategy
+    + Special Pricing Conditions: special pricing
+    --
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Cross Product Operations
+    --
+    + Product Combination: product bundling
+    + Reward Points Account: rewards management
+    + Reward Points Awards And Redemption: rewards processing
+  }
+}
+
+' Corporate Core (Middle Row) - FOCUS AREA
+package "Corporate Core" as CORPORATE {
+
+  class "CorporateAccountsCash" as CORP_ACCOUNTS CORPORATE_COLOR {
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Product Specific Fulfillment
+    **Service Domains:**
+    --
+    + Corporate Current Account: corporate accounts
+    + Cash Management And Account Services: cash management
+    + Direct Debit Mandate: direct debit setup
+    + Direct Debit: direct debit processing
+    + Cheque Lock Box: cheque processing
+    + Cash Concentration: cash concentration
+    + Notional Pooling: pooling services
+    + Corporate Payroll Services: payroll services
+    --
+    **BIAN Business Domain:** Trade Banking
+    --
+    + Cash Management And Account Services: cash services
+  }
+
+  class "CorporateLoans" as CORP_LOANS CORPORATE_COLOR {
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Product Specific Fulfillment
+    **Service Domains:**
+    --
+    + Corporate Loan: commercial lending
+    + Syndicated Loan: syndicated lending
+    + Project Finance: project financing
+    + Corporate Lease: corporate leasing
+    --
+    **BIAN Business Domain:** Corporate Financing and Advisory Services
+    --
+    + Corporate Finance: corporate financing
+  }
+
+  class "TradeFinance" as TRADE CORPORATE_COLOR {
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Trade Banking
+    **Service Domains:**
+    --
+    + Letter of Credit: LC management
+    + Bank Guarantee: guarantee services
+    + Credit Management: credit services
+    + Factoring: factoring services
+    + <color:NOT_IMPLEMENTED>Documentary Collection</color>
+    --
+    **BIAN Business Domain:** Corporate Financing and Advisory Services
+    --
+    + Mergers and Acquisitions Advisory: M&A advisory
+    + Corporate Tax Advisory: tax advisory
+  }
+}
+
+' Wealth Management (Middle Row) - FOCUS AREA
+package "Wealth Management" as WEALTH {
+
+  class "InvestmentManagement" as INVESTMENT WEALTH_COLOR {
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Investment Management
+    **Service Domains:**
+    --
+    + Investment Portfolio Planning: portfolio planning
+    + Investment Portfolio Analysis: portfolio analysis
+    + Investment Portfolio Management: portfolio management
+    + Investment Account: investment accounts
+    + eTrading Workbench: trading platform
+    --
+    **BIAN Business Domain:** Market Operations
+    --
+    + Mutual Fund Administration: mutual fund admin
+    + Hedge Fund Administration: hedge fund admin
+    + Unit Trust Administration: unit trust admin
+    --
+    **BIAN Business Domain:** Wholesale Trading
+    --
+    + <color:NOT_IMPLEMENTED>Brokerage Services</color>
+    + <color:NOT_IMPLEMENTED>Financial Planning</color>
+    + <color:NOT_IMPLEMENTED>Fiduciary Services</color>
+    --
+    **BIAN Business Area:** Sales and Service
+    **BIAN Business Domain:** Sales
+    --
+    + Product Matching: product matching
+    + Product Expert Sales Support: sales support
+    + Product Sales Support: sales assistance
+  }
+}
+
+' Financial Management (Bottom Row) - NON-FOCUS
+package "Financial Management" as FINANCE {
+
+  class "FinancialAccounting" as ACCOUNTING FINANCE_COLOR {
+    **BIAN Business Area:** Risk and Compliance
+    **BIAN Business Domain:** Regulations and Compliance
+    **Service Domains:**
+    --
+    + Financial Accounting: accounting services
+    + Financial Statement Assessment: statement analysis
+    --
+    **BIAN Business Area:** Business Support
+    **BIAN Business Domain:** Finance
+    --
+    + Financial Statements: statement generation
+    + Financial Control: financial control
+    + Financial Compliance: compliance monitoring
+    + Enterprise Tax Administration: tax administration
+    --
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Account Management
+    --
+    + Account Reconciliation: reconciliation services
+  }
+
+  class "TreasuryManagement" as TREASURY FINANCE_COLOR {
+    **BIAN Business Area:** Risk and Compliance
+    **BIAN Business Domain:** Bank Portfolio and Treasury
+    **Service Domains:**
+    --
+    + Bank Portfolio Analysis: portfolio analysis
+    + Bank Portfolio Administration: portfolio admin
+    + Corporate Treasury Analysis: treasury analysis
+    + Corporate Treasury: treasury management
+    + Asset Securitization: securitization services
+    + Asset And Liability Management: ALM services
+    + Stock Lending and Repos: lending services
+    --
+    **BIAN Business Domain:** Business Analysis
+    --
+    + Market Analysis: market analysis
+    + Contribution Analysis: contribution analysis
+    + Competitor Analysis: competitor analysis
+  }
+}
+
+' Risk & Compliance (Bottom Row) - NON-FOCUS
+package "Risk & Compliance" as RISK {
+
+  class "CreditRiskManagement" as CREDIT_RISK RISK_COLOR {
+    **BIAN Business Area:** Risk and Compliance
+    **BIAN Business Domain:** Models
+    **Service Domains:**
+    --
+    + Credit Risk Models: credit modeling
+    + Economic Capital: capital modeling
+    + Gap Analysis: gap analysis
+    --
+    **BIAN Business Domain:** Regulations and Compliance
+    --
+    + Guideline Compliance: compliance monitoring
+  }
+
+  class "OperationalRisk" as OP_RISK RISK_COLOR {
+    **BIAN Business Area:** Risk and Compliance
+    **BIAN Business Domain:** Models
+    **Service Domains:**
+    --
+    + Operational Risk Models: operational modeling
+    + Business Risk Models: business risk modeling
+    + Liquidity Risk Models: liquidity modeling
+    + Market Risk Models: market modeling
+    + Fraud Model: fraud modeling
+    --
+    **BIAN Business Domain:** Business Analysis
+    --
+    + Business Analysis: business analytics
+  }
+
+  class "ComplianceRegulatory" as COMPLIANCE RISK_COLOR {
+    **BIAN Business Area:** Risk and Compliance
+    **BIAN Business Domain:** Regulations and Compliance
+    **Service Domains:**
+    --
+    + Regulatory Reporting: regulatory reports
+    + Regulatory Compliance: compliance management
+    + Compliance Reporting: compliance reports
+    + Guideline Compliance: guideline compliance
+    + Financial Crime: financial crime prevention
+    --
+    **BIAN Business Domain:** Business Support
+    **BIAN Business Domain:** Non-IT and Non-HR Enterprise Services
+    --
+    + Legal Compliance: legal compliance
+    + Internal Audit: audit services
+  }
+
+  class "FraudManagement" as FRAUD RISK_COLOR {
+    **BIAN Business Area:** Risk and Compliance
+    **BIAN Business Domain:** Regulations and Compliance
+    **Service Domains:**
+    --
+    + Fraud Resolution: fraud resolution
+    + Fraud Evaluation: fraud evaluation
+    + Fraud Diagnosis: fraud diagnosis
+    --
+    **BIAN Business Domain:** Models
+    --
+    + Fraud Model: fraud modeling
+    --
+    **BIAN Business Area:** Operations and Execution
+    **BIAN Business Domain:** Cross Product Operations
+    --
+    + Fraud Evaluation: fraud assessment
+    + Fraud Diagnosis: fraud detection
+  }
+}
+
+' Customer Domain (Bottom Row) - PARTY MANAGEMENT IS FOCUS, OTHERS NON-FOCUS
+package "Customer Domain" as CUSTOMER {
+
+  class "CustomerManagement" as CRM CUSTOMER_COLOR {
+    **BIAN Business Area:** Sales and Service
+    **BIAN Business Domain:** Customer Management
+    **Service Domains:**
+    --
+    + Customer Relationship Management: relationship management
+    + Customer Product And Service Eligibility: eligibility checking
+    + Customer Agreement: agreement management
+    + Sales Product Agreement: sales agreements
+    + Customer Access Entitlement: access management
+    + Customer Behavior Insights: behavior analysis
+    + Customer Credit Rating: credit rating
+    + Account Recovery: account recovery
+    + Customer Event History: event tracking
+    --
+    **BIAN Business Domain:** Marketing
+    --
+    + Business Development: business development
+    + Brand Management: brand management
+    + Advertising: advertising services
+    + Promotional Events: promotional activities
+    + Prospect Campaign Design: campaign design
+    + Customer Campaign Management: campaign management
+    + Customer Campaign Design: campaign design
+    + Customer Surveys: survey management
+    + Prospect Campaign Management: prospect campaigns
+    --
+    **BIAN Business Domain:** Sales
+    --
+    + Prospect Campaign Execution: campaign execution
+    + Customer Campaign Execution: customer campaigns
+  }
+
+  class "PartyManagement" as PARTY PRIORITY_COLOR {
+    **BIAN Business Area:** Reference Data
+    **BIAN Business Domain:** Party
+    **Service Domains:**
+    --
+    + Party Routing Profile: routing profiles
+    + Legal Entity Directory: legal entities
+    --
+    **BIAN Business Area:** Sales and Service
+    **BIAN Business Domain:** Customer Management
+    --
+    + Customer Reference Data Directory: customer data
+    + Party Reference Data Directory: party data
+  }
+
+  class "CustomerAnalytics" as ANALYTICS CUSTOMER_COLOR {
+    **BIAN Business Area:** Risk and Compliance
+    **BIAN Business Domain:** Business Analysis
+    **Service Domains:**
+    --
+    + Market Research: market research
+    + Channel Portfolio: channel analytics
+    + Branch Portfolio: branch analytics
+    + Segment Direction: segment analysis
+    + Customer Portfolio: customer analytics
+    + Product Portfolio: product analytics
+    --
+    **BIAN Business Domain:** Models
+    --
+    + Customer Behavior Models: behavior modeling
+    --
+    **BIAN Business Area:** Sales and Service
+    **BIAN Business Domain:** Customer Management
+    --
+    + Customer Intelligence: customer intelligence
+  }
+}
+
+' Other External Services (Bottom Row) - NON-FOCUS
+package "Other External Services" as EXTERNAL {
+
+  class "OperationalSupport" as OP_SUPPORT EXTERNAL_COLOR {
+    **BIAN Business Area:** Business Support
+    **BIAN Business Domain:** IT Management
+    **Service Domains:**
+    --
+    + Systems Operations: system operations
+    + Systems Assurance: system assurance
+    + Systems Administration: system admin
+    + System Development: development services
+    + System Deployment: deployment services
+    + Production Release: release management
+    + Platform Operations: platform operations
+    + IT Systems Direction: IT direction
+    + IT Standards And Guidelines: standards
+    + Internal Network Operation: network operations
+    + Development Environment: development env
+    + Systems Help Desk: help desk
+    + Operational Gateway: operational gateway
+    --
+    **BIAN Business Domain:** Non-IT and Non-HR Enterprise Services
+    --
+    + Security Assurance: security assurance
+    + Security Advisory: security advisory
+    + Procurement: procurement services
+    + Legal Advisory: legal advisory
+    + Fixed Asset Register: asset register
+    + Company Billing and Payments: billing
+    + Approved Supplier Directory: supplier directory
+    --
+    **BIAN Business Domain:** Buildings Equipment and Facilities
+    --
+    + Utilities Administration: utilities
+    + Site Operations: site operations
+    + Site Administration: site admin
+    + Property Portfolio: property management
+    + Equipment Maintenance: equipment maintenance
+    + Equipment Administration: equipment admin
+    + Building Maintenance: building maintenance
+    --
+    **BIAN Business Domain:** Human Resource Management
+    --
+    + Workforce Training: training services
+    + Travel and Expenses: travel management
+    + Recruitment: recruitment services
+    + Human Resources Direction: HR direction
+    + Employee and Contractor Contract: contracts
+    + Employee Payroll And Incentives: payroll
+    + Employee Evaluation: performance evaluation
+    + Employee Data Management: employee data
+    + Employee Certification: certification
+    + Employee Benefits: benefits management
+    + Employee Assignment: assignments
+    + Employee Access: access management
+    --
+    **BIAN Business Domain:** Document Management and Archive
+    --
+    + Document Directory: document management
+    + Correspondence: correspondence
+    + Archive Services: archiving
+    + Document Services: document services
+    --
+    **BIAN Business Domain:** Knowledge and Intellectual Property Management
+    --
+    + Management Manual: manuals
+    + Knowledge Exchange: knowledge sharing
+    + Intellectual Property Portfolio: IP management
+    --
+    **BIAN Business Domain:** Corporate Relations
+    --
+    + Regulatory And Legal Authority: regulatory relations
+    + Investor Relations: investor relations
+    + Corporate Relationship: corporate relations
+    + Corporate Communications: communications
+    + Corporate Alliance and Stake Holder: alliances
+    --
+    **BIAN Business Domain:** Business Direction
+    --
+    + Corporate Policies: policy management
+    + Continuity Planning: business continuity
+    + Enterprise Architecture: architecture
+    + Products and Services Direction: product direction
+    --
+    **BIAN Business Domain:** Business Command and Control
+    --
+    + Business Unit Management: business management
+    + Business Unit Financial Analysis: financial analysis
+    + Business Unit Direction: business direction
+    + Business Unit Accounting: accounting
+    + Business Unit Financial Operations: financial ops
+    + Organization Direction: organization direction
+  }
+}
+
+' Layout Control - Arrange in rows
+' TOP ROW
+DIGITAL -[hidden]right- CLIENT_EXP
+
+' MIDDLE ROW
+RETAIL -[hidden]right- CORPORATE
+CORPORATE -[hidden]right- WEALTH
+
+' BOTTOM ROW
+FINANCE -[hidden]right- RISK
+RISK -[hidden]right- CUSTOMER
+CUSTOMER -[hidden]right- EXTERNAL
+
+' Vertical arrangement between rows
+DIGITAL -[hidden]down- RETAIL
+CLIENT_EXP -[hidden]down- CORPORATE
+WEALTH -[hidden]down- FINANCE
+RETAIL -[hidden]down- FINANCE
+CORPORATE -[hidden]down- RISK
+FINANCE -[hidden]down- CUSTOMER
+
+legend right
+  |= Domain |= Color |= Priority |
+  | **FOCUS AREAS** |= |= |
+  | Retail Core & Payments | <color:RETAIL_COLOR>Blue</color> | **HIGH** |
+  | Corporate Core | <color:CORPORATE_COLOR>Dark Green</color> | **HIGH** |
+  | Wealth Management | <color:WEALTH_COLOR>Purple</color> | **HIGH** |
+  | Party Management | <color:PRIORITY_COLOR>Gold</color> | **PRIORITY** |
+  | **NON-FOCUS AREAS** |= |= |
+  | All Other Domains | <color:BLACK_COLOR>Black Font</color> | Low Priority |
+  | <color:NOT_IMPLEMENTED>Not Implemented</color> | <color:NOT_IMPLEMENTED>Red</color> | Gap |
+endlegend
+
+note top of RETAIL
+  **PRIORITY 1: RETAIL CORE**
+  • Deposits & Accounts ✓ In Progress
+  • Retail Lending ✓ In Progress
+  • Limits & Collateral ✓ In Progress
+  • Payments & Transfers ✓ In Progress
+  • Product & Pricing ✓ In Progress
+end note
+
+note top of CORPORATE
+  **PRIORITY 2: CORPORATE CORE**
+  Focus on corporate banking
+  and trade finance capabilities
+end note
+
+note top of PARTY
+  **PRIORITY 3: PARTY MANAGEMENT**
+  Critical foundation for all
+  customer and corporate services
+end note
+
+@enduml
