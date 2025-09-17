@@ -431,6 +431,44 @@ class BianUMLVisualizer {
             if (this.largeFontsEnabled) {
                 console.log('Applying large fonts to SVG');
 
+                // Ensure white background inside SVG
+                try {
+                    const SVG_NS = 'http://www.w3.org/2000/svg';
+                    // Set style background as a first line of defense
+                    svgElement.style.background = '#FFFFFF';
+
+                    // Insert white rect as the first child covering the whole viewBox
+                    const viewBox = svgElement.getAttribute('viewBox');
+                    let vbWidth = null; let vbHeight = null;
+                    if (viewBox) {
+                        const parts = viewBox.trim().split(/\s+/);
+                        if (parts.length === 4) {
+                            vbWidth = parts[2];
+                            vbHeight = parts[3];
+                        }
+                    }
+                    const widthAttr = svgElement.getAttribute('width');
+                    const heightAttr = svgElement.getAttribute('height');
+
+                    const rect = document.createElementNS(SVG_NS, 'rect');
+                    rect.setAttribute('x', '0');
+                    rect.setAttribute('y', '0');
+                    rect.setAttribute('width', vbWidth || widthAttr || '100%');
+                    rect.setAttribute('height', vbHeight || heightAttr || '100%');
+                    rect.setAttribute('fill', '#FFFFFF');
+
+                    // Only add if a background rect is not already present
+                    const hasBackgroundRect = Array.from(svgElement.childNodes).some(node => {
+                        return node.nodeType === 1 && node.tagName && node.tagName.toLowerCase() === 'rect' && node.getAttribute('fill');
+                    });
+                    if (!hasBackgroundRect) {
+                        svgElement.insertBefore(rect, svgElement.firstChild);
+                        console.log('Inserted white background rect into SVG');
+                    }
+                } catch (e) {
+                    console.warn('Failed to enforce white SVG background:', e);
+                }
+
                 // Method 1: Direct style manipulation
                 svgElement.style.fontSize = '18px';
                 // Remove font-weight to avoid bold text
@@ -466,6 +504,7 @@ class BianUMLVisualizer {
                 // Method 4: Force style injection (only font-size, preserve colors and weights)
                 const styleElement = document.createElement('style');
                 styleElement.textContent = `
+                    #${svgElement.id || 'visualizationArea'} svg { background: #FFFFFF !important; }
                     #${svgElement.id || 'visualizationArea'} svg text {
                         font-size: 18px !important;
                     }
@@ -492,36 +531,41 @@ class BianUMLVisualizer {
                     }
                 `;
                 document.head.appendChild(styleElement);
-                console.log('Injected CSS style (size only, blue colors preserved)');
+                console.log('Injected CSS style (size only, blue colors preserved, white background enforced)');
 
                 // Method 5: Direct SVG content manipulation as last resort
                 try {
                     const svgContent = svgElement.outerHTML;
                     let modifiedContent = svgContent;
 
+                    // Ensure white background by injecting a rect if missing
+                    if (!/\<rect[^>]*fill\s*=\s*"#?fff/i.test(modifiedContent)) {
+                        const vbMatch = modifiedContent.match(/viewBox=\"([^\"]+)\"/);
+                        let bgRect = '<rect x="0" y="0" width="100%" height="100%" fill="#FFFFFF"/>';
+                        modifiedContent = modifiedContent.replace(/<svg[^>]*>/, (m) => m + bgRect);
+                    }
+
                     // Replace font-size attributes only, preserve colors and weights
-                    modifiedContent = modifiedContent.replace(/font-size="[^"]*"/g, 'font-size="18px"');
+                    modifiedContent = modifiedContent.replace(/font-size=\"[^\"]*\"/g, 'font-size="18px"');
                     modifiedContent = modifiedContent.replace(/font-size='[^']*'/g, "font-size='18px'");
 
                     // CRITICAL: Ensure blue colors are preserved in the modified content
-                    modifiedContent = modifiedContent.replace(/fill="[^"]*"/g, (match) => {
+                    modifiedContent = modifiedContent.replace(/fill=\"[^\"]*\"/g, (match) => {
                         if (match.includes('#0000FF') || match.includes('#0000ff') || match.includes('blue')) {
                             return 'fill="#0000FF"';
                         }
                         return match;
                     });
 
-                    // Don't add font-weight to avoid bold text
-
                     if (modifiedContent !== svgContent) {
-                        console.log('Direct SVG content modification applied (size only, colors preserved)');
+                        console.log('Direct SVG content modification applied (white background, size only, colors preserved)');
                         // Replace the SVG element with modified version
                         const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = modifiedContent;
                         const newSvg = tempDiv.querySelector('svg');
                         if (newSvg) {
                             svgElement.parentNode.replaceChild(newSvg, svgElement);
-                            console.log('SVG element replaced with modified version (blue colors preserved)');
+                            console.log('SVG element replaced with modified version (white background enforced)');
                         }
                     }
                 } catch (error) {
