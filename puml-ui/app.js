@@ -431,42 +431,53 @@ class BianUMLVisualizer {
             if (this.largeFontsEnabled) {
                 console.log('Applying large fonts to SVG');
 
-                // Ensure white background inside SVG
+                // Strong: enforce white background inside SVG
                 try {
                     const SVG_NS = 'http://www.w3.org/2000/svg';
-                    // Set style background as a first line of defense
                     svgElement.style.background = '#FFFFFF';
 
-                    // Insert white rect as the first child covering the whole viewBox
                     const viewBox = svgElement.getAttribute('viewBox');
-                    let vbWidth = null; let vbHeight = null;
+                    let vb = null;
                     if (viewBox) {
-                        const parts = viewBox.trim().split(/\s+/);
-                        if (parts.length === 4) {
-                            vbWidth = parts[2];
-                            vbHeight = parts[3];
+                        const p = viewBox.trim().split(/\s+/).map(Number);
+                        if (p.length === 4 && p.every(n => !Number.isNaN(n))) {
+                            vb = { x: p[0], y: p[1], w: p[2], h: p[3] };
                         }
                     }
-                    const widthAttr = svgElement.getAttribute('width');
-                    const heightAttr = svgElement.getAttribute('height');
 
-                    const rect = document.createElementNS(SVG_NS, 'rect');
-                    rect.setAttribute('x', '0');
-                    rect.setAttribute('y', '0');
-                    rect.setAttribute('width', vbWidth || widthAttr || '100%');
-                    rect.setAttribute('height', vbHeight || heightAttr || '100%');
-                    rect.setAttribute('fill', '#FFFFFF');
-
-                    // Only add if a background rect is not already present
-                    const hasBackgroundRect = Array.from(svgElement.childNodes).some(node => {
-                        return node.nodeType === 1 && node.tagName && node.tagName.toLowerCase() === 'rect' && node.getAttribute('fill');
+                    const rects = Array.from(svgElement.querySelectorAll('rect'));
+                    let bgRect = rects.find(r => {
+                        const w = r.getAttribute('width');
+                        const h = r.getAttribute('height');
+                        const x = r.getAttribute('x') || '0';
+                        const y = r.getAttribute('y') || '0';
+                        const fill = (r.getAttribute('fill') || '').toLowerCase();
+                        const isFull = (w === '100%' && h === '100%') || (vb && Number(w) === vb.w && Number(h) === vb.h);
+                        const atOrigin = (x === '0' && y === '0');
+                        return isFull && atOrigin;
                     });
-                    if (!hasBackgroundRect) {
-                        svgElement.insertBefore(rect, svgElement.firstChild);
-                        console.log('Inserted white background rect into SVG');
+
+                    if (!bgRect) {
+                        bgRect = document.createElementNS(SVG_NS, 'rect');
+                        bgRect.setAttribute('x', '0');
+                        bgRect.setAttribute('y', '0');
+                        bgRect.setAttribute('width', vb ? String(vb.w) : '100%');
+                        bgRect.setAttribute('height', vb ? String(vb.h) : '100%');
+                        svgElement.insertBefore(bgRect, svgElement.firstChild);
+                        console.log('Inserted new background rect');
+                    } else {
+                        // Move existing to back if not already
+                        if (svgElement.firstChild !== bgRect) {
+                            svgElement.removeChild(bgRect);
+                            svgElement.insertBefore(bgRect, svgElement.firstChild);
+                            console.log('Moved existing background rect to back');
+                        }
                     }
+
+                    bgRect.setAttribute('fill', '#FFFFFF');
+                    bgRect.setAttribute('stroke', 'none');
                 } catch (e) {
-                    console.warn('Failed to enforce white SVG background:', e);
+                    console.warn('Failed to enforce white SVG background (strong):', e);
                 }
 
                 // Method 1: Direct style manipulation
