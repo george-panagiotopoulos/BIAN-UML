@@ -17,6 +17,7 @@ together {
       Virtual Account
       <color:#0000FF>Internal Bank Account</color>
     }
+    note right of DEP_SVC : <color:#FF0000>Pilot PI1, MVP PI2</color>
   }
 
   package "Retail Lending" as RETAIL_LENDING_PKG {
