@@ -694,6 +694,7 @@ class BianUMLVisualizer {
                 large_fonts: requestData.large_fonts,
                 uml_length: requestData.uml_content.length
             });
+            console.log('🔍 Full request data:', requestData);
 
             const response = await fetch('/api/generate-diagram', {
                 method: 'POST',

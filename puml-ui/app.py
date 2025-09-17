@@ -104,9 +104,12 @@ def generate_diagram():
         output_format = data.get('format', 'svg')  # svg, png, etc.
         large_fonts = data.get('large_fonts', False)  # Flag for large fonts
         
+        # Debug: Print all received data
+        print(f"🔍 Received request data: large_fonts={large_fonts} (type: {type(large_fonts)}), format='{output_format}' (type: {type(output_format)})")
+        
         # If large fonts requested, modify UML content for bigger font sizes
-        if large_fonts and output_format == 'png':
-            print(f"🔍 Large fonts requested: {large_fonts}, format: {output_format}")
+        if large_fonts:
+            print(f"✅ Large fonts condition met: {large_fonts}, format: {output_format}")
             original_length = len(uml_content)
             uml_content = enhance_uml_for_large_fonts(uml_content)
             print(f"📝 UML content enhanced from {original_length} to {len(uml_content)} characters")
@@ -182,6 +185,11 @@ def enhance_uml_for_large_fonts(uml_content):
         
         result = '\n'.join(enhanced_lines)
         print(f"✅ Enhanced UML content created with {len(enhanced_lines)} lines")
+        
+        # Show first few lines of enhanced content for debugging
+        first_lines = '\n'.join(enhanced_lines[:10])
+        print(f"📋 First 10 lines of enhanced UML:\n{first_lines}")
+        
         return result
         
     except Exception as e:
