@@ -106,7 +106,12 @@ def generate_diagram():
         
         # If large fonts requested, modify UML content for bigger font sizes
         if large_fonts and output_format == 'png':
+            print(f"🔍 Large fonts requested: {large_fonts}, format: {output_format}")
+            original_length = len(uml_content)
             uml_content = enhance_uml_for_large_fonts(uml_content)
+            print(f"📝 UML content enhanced from {original_length} to {len(uml_content)} characters")
+        else:
+            print(f"ℹ️  Normal fonts: large_fonts={large_fonts}, format={output_format}")
         
         # Validate PlantUML jar exists
         if not PLANTUML_JAR.exists():
@@ -145,6 +150,7 @@ def generate_diagram():
 def enhance_uml_for_large_fonts(uml_content):
     """Enhance UML content with larger font specifications for better readability"""
     try:
+        print("🔧 Enhancing UML content for large fonts...")
         lines = uml_content.split('\n')
         enhanced_lines = []
         
@@ -170,13 +176,16 @@ def enhance_uml_for_large_fonts(uml_content):
                 enhanced_lines.append('skinparam classBackgroundColor white')
                 enhanced_lines.append('skinparam packageBackgroundColor white')
                 enhanced_lines.append('')
+                print("✅ Added skinparam font configurations")
             else:
                 enhanced_lines.append(line)
         
-        return '\n'.join(enhanced_lines)
+        result = '\n'.join(enhanced_lines)
+        print(f"✅ Enhanced UML content created with {len(enhanced_lines)} lines")
+        return result
         
     except Exception as e:
-        print(f"Error enhancing UML for large fonts: {e}")
+        print(f"❌ Error enhancing UML for large fonts: {e}")
         return uml_content  # Return original if enhancement fails
 
 def convert_svg_to_png(svg_content):

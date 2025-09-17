@@ -325,7 +325,7 @@ class BianUMLVisualizer {
     toggleFontSize() {
         console.log('toggleFontSize method called');
         this.largeFontsEnabled = !this.largeFontsEnabled;
-        console.log('largeFontsEnabled set to:', this.largeFontsEnabled);
+        console.log('🔄 largeFontsEnabled toggled to:', this.largeFontsEnabled);
 
         const toggleButton = document.getElementById('fontSizeToggle');
         const fontSizeText = document.getElementById('fontSizeText');
@@ -683,16 +683,24 @@ class BianUMLVisualizer {
             // Always use PNG format for reliable rendering across environments
             const format = 'png';
 
+            const requestData = {
+                uml_content: umlContent,
+                format: format,
+                large_fonts: this.largeFontsEnabled
+            };
+            
+            console.log('🚀 Sending diagram generation request:', {
+                format: requestData.format,
+                large_fonts: requestData.large_fonts,
+                uml_length: requestData.uml_content.length
+            });
+
             const response = await fetch('/api/generate-diagram', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    uml_content: umlContent,
-                    format: format,
-                    large_fonts: this.largeFontsEnabled
-                })
+                body: JSON.stringify(requestData)
             });
             
             if (!response.ok) {
