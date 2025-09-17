@@ -112,64 +112,39 @@
     z-index: 1000;
 }
 
-/* Font size toggle styles - Size only, preserve colors and weights */
+/* Font size toggle styles - PNG-based scaling approach */
 
-/* Approach 1: Direct SVG text targeting */
-.large-fonts svg text {
-    font-size: 16px !important;
-    /* Preserve original font-weight and colors */
+/* Large fonts container - uses CSS transform for reliable scaling */
+.large-fonts .diagram-image {
+    transform: scale(1.5) !important;
+    transform-origin: top left !important;
+    image-rendering: -webkit-optimize-contrast !important;
+    image-rendering: crisp-edges !important;
 }
 
-/* Approach 2: All-element targeting (size only) */
-.large-fonts * {
-    font-size: 14px !important;
-    /* Don't change font-weight or colors */
+/* Adjust container height when scaled */
+.large-fonts .diagram-container {
+    height: auto !important;
+    min-height: calc(80vh * 1.5) !important;
 }
 
-/* Approach 3: Specific PlantUML element targeting */
-.large-fonts svg .class-text,
-.large-fonts svg .class-name {
-    font-size: 16px !important;
-    /* Preserve original styling */
+/* Alternative approach: CSS zoom for better compatibility */
+.large-fonts .diagram-zoom {
+    zoom: 1.5 !important;
+    -moz-transform: scale(1.5) !important;
+    -moz-transform-origin: 0 0 !important;
 }
 
-.large-fonts svg .package-name {
-    font-size: 16px !important;
-    /* Preserve original styling */
+/* Fallback for older browsers */
+.large-fonts img {
+    width: 150% !important;
+    height: auto !important;
 }
 
-/* Approach 4: Title-specific targeting */
-.large-fonts svg text[class*="title"] {
-    font-size: 18px !important;
-    /* Preserve original styling */
-}
-
-.large-fonts svg text[class*="class"] {
-    font-size: 16px !important;
-    /* Preserve original styling */
-}
-
-/* Approach 5: Generic text element targeting */
-.large-fonts svg text {
-    font-size: 16px !important;
-    /* Preserve original font-weight and colors */
-}
-
-/* Approach 6: Direct font-size attribute override */
-.large-fonts svg text[font-size] {
-    font-size: 16px !important;
-}
-
-/* Approach 7: Dynamic class for runtime application */
-.large-fonts-applied svg text {
-    font-size: 16px !important;
-    /* Preserve original colors - don't force black */
-}
-
-/* Approach 8: Universal override */
-.large-fonts svg * {
-    font-size: 14px !important;
-    /* Don't change font-weight or colors */
+/* Ensure proper container sizing */
+.large-fonts .max-w-full {
+    max-width: 150% !important;
+    width: 150% !important;
 }
 
 /* Button states for font toggle */
