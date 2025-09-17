@@ -1,0 +1,159 @@
+@startuml Combined BIAN Diagrams
+
+title Combined BIAN Architecture Domains
+
+!define LAYOUT top to bottom direction
+
+' === Products, Loans & Cards Domain ===
+' Row 1
+together {
+  package "Product Specific Fulfillment" as PRODUCTS {
+    class "Deposits & Accounts <color:#0000FF>(Temenos: Deposits module)</color>" as DEP {
+      <color:#0000FF>Current Account</color>
+      <color:#0000FF>Savings Account</color>
+      <color:#0000FF>Term Deposit</color>
+      Term Deposit Framework Agreement
+      <color:#0000FF>Multicurrency Account</color>
+      <color:#0000FF>Standing Order</color>
+      Virtual Account
+    }
+
+    class "Retail Lending <color:#0000FF>(Temenos: Lending module)</color>" as RETAIL_LENDING {
+      <color:#0000FF>Consumer Loan</color>
+      <color:#0000FF>Mortgage Loan</color>
+      <color:#0000FF>Merchandising Loan</color>
+      Leasing
+      Leasing Item Administration
+    }
+
+    class "Corporate Lending" as CORP_LENDING {
+      Corporate Loan
+      Syndicated Loan
+      Project Finance
+      Corporate Lease
+    }
+
+    class "Corporate Banking" as CORP {
+      Corporate Current Account
+      Cash Management And Account Services
+      Direct Debit Mandate
+      Direct Debit
+      Cheque Lock Box
+      Cash Concentration
+      Notional Pooling
+      Corporate Payroll Services
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Cards" as CARDS {
+    class "Card Services" as CARD_SVC {
+      Credit Card
+      Card Authorization
+      Card Transaction Capture
+      Merchant Relations
+      Merchant Acquiring Facility
+      Card Network Participant Facility
+      Credit Card Position Keeping
+    }
+  }
+
+  package "Corporate Financing and Advisory" as CORP_FIN {
+    class "Financing Services" as FIN_SVC {
+      Public Offering
+      Private Placement
+      Mergers and Acquisitions Advisory
+      Corporate Tax Advisory
+      Corporate Finance
+    }
+  }
+
+  package "Trade Banking" as TRADE {
+    class "Trade Finance" as TRADE_FIN {
+      Letter of Credit
+      Bank Guarantee
+      Credit Management
+      Factoring
+      Documentary Collections
+    }
+  }
+}
+
+' Layout positioning
+CARDS -[hidden]right- CORP_FIN
+CORP_FIN -[hidden]right- TRADE
+PRODUCTS -[hidden]down- CARDS
+PRODUCTS -[hidden]down- CORP_FIN
+PRODUCTS -[hidden]down- TRADE
+
+' Additional positioning for new lending sections
+RETAIL_LENDING -[hidden]right- CORP_LENDING
+
+' === Reference & Market Data Domain ===
+' Row 1
+together {
+  package "Party" as PARTY {
+    class "Party Data" as PARTY_DATA {
+      Party Routing Profile
+      Legal Entity Directory
+    }
+  }
+
+  package "External Agency" as EXTERNAL {
+    class "External Services" as EXT_SVC {
+      Information Provider Administration
+      Syndicate Management
+      Interbank Relationship Management
+      Correspondent Bank Relationship Management
+      Correspondent Bank Directory
+      Sub Custodian Agreement
+      Product Service Agency
+      Product Broker Agreement
+      Contractor and Supplier Agreement
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Market Data" as MARKET_DATA {
+    class "Market Information" as MKT_INFO {
+      Information Provider Operation
+      Market Information Management
+      Financial Market Analysis
+      Financial Market Research
+      Quant Model
+      Market Data Switch Administration
+      Market Data Switch Operation
+    }
+
+    class "Financial Instruments" as INSTRUMENTS {
+      Financial Instrument Reference Data Management
+      Counterparty Administration
+      Public Reference Data Management
+      Location Data Management
+    }
+  }
+
+  package "Product Management" as PRODUCT_MGMT {
+    class "Product Services <color:#0000FF>(Temenos: Product Catalogue module and pricing module)</color>" as PROD {
+      <color:#0000FF>Product Design (Product Catalogue)</color>
+      <color:#0000FF>Product Deployment (Product Catalogue)</color>
+      Product Training
+      Product Quality Assurance
+      <color:#0000FF>Discount Pricing (Pricing)</color>
+      <color:#0000FF>Product Directory (Product Catalogue)</color>
+      <color:#0000FF>Special Pricing Conditions (Pricing)</color>
+    }
+  }
+}
+
+' Layout positioning
+PARTY -[hidden]right- EXTERNAL
+MARKET_DATA -[hidden]right- PRODUCT_MGMT
+PARTY -[hidden]down- MARKET_DATA
+EXTERNAL -[hidden]down- PRODUCT_MGMT
+
+@enduml

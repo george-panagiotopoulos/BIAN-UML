@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Toggle Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">Font Toggle Test</h1>
+
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-700">Test Area</h2>
+                <div class="flex items-center gap-4">
+                    <button
+                        id="fontSizeToggle"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center gap-2"
+                        title="Toggle larger fonts for better readability"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span id="fontSizeText">Larger Fonts</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="visualizationArea" class="min-h-96 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-center p-8">
+                <div class="text-center">
+                    <h3 class="text-xl font-bold mb-4">Test Content - Click button to see font changes</h3>
+                    <div id="contentArea">
+                        <p class="text-gray-600">Select a diagram and click "Visualize UML" to see the font toggle in action.</p>
+                        <p class="text-sm text-gray-500 mt-2">The font toggle will work with real PlantUML-generated SVG diagrams.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple test for font toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Font toggle test page loaded');
+
+            const fontToggleBtn = document.getElementById('fontSizeToggle');
+            const fontSizeText = document.getElementById('fontSizeText');
+            const visualizationArea = document.getElementById('visualizationArea');
+
+            console.log('Elements found:', {
+                fontToggleBtn: !!fontToggleBtn,
+                fontSizeText: !!fontSizeText,
+                visualizationArea: !!visualizationArea
+            });
+
+            if (fontToggleBtn) {
+                let largeFontsEnabled = false;
+
+                fontToggleBtn.addEventListener('click', function() {
+                    console.log('Button clicked!');
+
+                    largeFontsEnabled = !largeFontsEnabled;
+
+                    if (largeFontsEnabled) {
+                        fontToggleBtn.classList.add('active');
+                        fontToggleBtn.style.backgroundColor = '#22c55e';
+                        fontSizeText.textContent = 'Normal Fonts';
+                        visualizationArea.classList.add('large-fonts');
+                        document.getElementById('contentArea').innerHTML = `
+                            <div style="background: #d1fae5; border: 2px solid #10b981; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                <h4 style="color: #065f46; font-size: 16px; margin-bottom: 10px;">✅ Large Fonts Mode Activated!</h4>
+                                <p style="color: #065f46; font-size: 14px;">Future diagrams will be generated in SVG format with larger fonts.</p>
+                                <p style="color: #065f46; font-size: 14px;">Blue color highlighting will be preserved.</p>
+                                <p style="color: #065f46; font-size: 12px;">Select a diagram and click "Visualize UML" to see the difference.</p>
+                            </div>
+                        `;
+                        console.log('Large fonts enabled - SVG mode active');
+                    } else {
+                        fontToggleBtn.classList.remove('active');
+                        fontToggleBtn.style.backgroundColor = '';
+                        fontSizeText.textContent = 'Larger Fonts';
+                        visualizationArea.classList.remove('large-fonts');
+                        document.getElementById('contentArea').innerHTML = `
+                            <p class="text-gray-600">Select a diagram and click "Visualize UML" to see the font toggle in action.</p>
+                            <p class="text-sm text-gray-500 mt-2">The font toggle will work with real PlantUML-generated SVG diagrams.</p>
+                        `;
+                        console.log('Large fonts disabled - PNG mode active');
+                    }
+                });
+
+                console.log('Event listener attached to font toggle button');
+            } else {
+                console.error('Font toggle button not found!');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+@startuml BIAN Risk & Compliance
+
+title BIAN Risk & Compliance Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "Bank Portfolio and Treasury" as PORTFOLIO {
+    class "Treasury Services" as TREASURY {
+      Stock Lending and Repos
+      Corporate Treasury Analysis
+      Corporate Treasury
+      Bank Portfolio Analysis
+      Bank Portfolio Administration
+      Asset Securitization
+      Asset And Liability Management
+    }
+  }
+
+  package "Business Analysis" as ANALYSIS {
+    class "Analytics Services" as ANALYTICS {
+      Market Analysis
+      Contribution Analysis
+      Competitor Analysis
+      Channel Portfolio
+      Branch Portfolio
+      Segment Direction
+      Customer Portfolio
+      Product Portfolio
+      Market Research
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Regulations and Compliance" as REGULATORY {
+    class "Regulatory Services" as REG {
+      Regulatory Reporting
+      Regulatory Compliance
+      Guideline Compliance
+      Fraud Resolution
+      Financial Accounting
+      Compliance Reporting
+      Financial Statement Assessment
+    }
+  }
+
+  package "Models" as MODELS {
+    class "Risk Models" as RISK_MODELS {
+      Contribution Models
+      Operational Risk Models
+      Production Risk Models
+      Business Risk Models
+      Credit and Margin Management
+      Economic Capital
+      Credit Risk Models
+      Financial Instrument Valuation Models
+      Market Risk Models
+      Liquidity Risk Models
+      Gap Analysis
+      Fraud Model
+      Customer Behavior Models
+    }
+  }
+}
+
+' Layout positioning
+PORTFOLIO -[hidden]right- ANALYSIS
+REGULATORY -[hidden]right- MODELS
+PORTFOLIO -[hidden]down- REGULATORY
+ANALYSIS -[hidden]down- MODELS
+
+@enduml

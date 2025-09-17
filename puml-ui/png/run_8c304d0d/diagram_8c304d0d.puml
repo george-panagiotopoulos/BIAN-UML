@@ -1,0 +1,86 @@
+@startuml BIAN Product, Loans, Cards & Financing
+
+title BIAN Product, Loans, Cards & Financing Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "Product Specific Fulfillment" as PRODUCTS {
+    class "Deposits & Accounts" as DEP {
+      Current Account
+      Savings Account
+      Term Deposit
+      Term Deposit Framework Agreement
+      Standing Order
+      Virtual Account
+    }
+
+    class "Loans & Lending" as LOANS {
+      Consumer Loan
+      Mortgage Loan
+      Merchandising Loan
+      Leasing
+      Leasing Item Administration
+      Corporate Loan
+      Syndicated Loan
+      Project Finance
+      Corporate Lease
+    }
+
+    class "Corporate Banking" as CORP {
+      Corporate Current Account
+      Cash Management And Account Services
+      Direct Debit Mandate
+      Direct Debit
+      Cheque Lock Box
+      Cash Concentration
+      Notional Pooling
+      Corporate Payroll Services
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Cards" as CARDS {
+    class "Card Services" as CARD_SVC {
+      Credit Card
+      Card Authorization
+      Card Transaction Capture
+      Merchant Relations
+      Merchant Acquiring Facility
+      Card Network Participant Facility
+      Credit Card Position Keeping
+    }
+  }
+
+  package "Corporate Financing and Advisory" as CORP_FIN {
+    class "Financing Services" as FIN_SVC {
+      Public Offering
+      Private Placement
+      Mergers and Acquisitions Advisory
+      Corporate Tax Advisory
+      Corporate Finance
+    }
+  }
+
+  package "Trade Banking" as TRADE {
+    class "Trade Finance" as TRADE_FIN {
+      Letter of Credit
+      Bank Guarantee
+      Credit Management
+      Factoring
+      Documentary Collections
+    }
+  }
+}
+
+' Layout positioning
+CARDS -[hidden]right- CORP_FIN
+CORP_FIN -[hidden]right- TRADE
+PRODUCTS -[hidden]down- CARDS
+PRODUCTS -[hidden]down- CORP_FIN
+PRODUCTS -[hidden]down- TRADE
+
+@enduml

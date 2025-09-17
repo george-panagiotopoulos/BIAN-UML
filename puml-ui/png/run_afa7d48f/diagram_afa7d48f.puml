@@ -1,0 +1,154 @@
+@startuml BIAN Business Support
+
+title BIAN Business Support Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "IT Management" as IT {
+    class "IT Services" as IT_SVC {
+      Systems Operations
+      Systems Assurance
+      Systems Administration
+      System Development
+      System Deployment
+      Production Release
+      Platform Operations
+      IT Systems Direction
+      IT Standards And Guidelines
+      Internal Network Operation
+      Development Environment
+      Systems Help Desk
+      Operational Gateway
+    }
+  }
+
+  package "Non-IT Enterprise Services" as ENTERPRISE {
+    class "Enterprise Services" as ENT_SVC {
+      Security Assurance
+      Security Advisory
+      Procurement
+      Legal Compliance
+      Internal Audit
+      Fixed Asset Register
+      Company Billing and Payments
+      Approved Supplier Directory
+      Legal Advisory
+    }
+  }
+
+  package "Buildings Equipment and Facilities" as FACILITIES {
+    class "Facilities Management" as FACIL {
+      Utilities Administration
+      Site Operations
+      Site Administration
+      Property Portfolio
+      Equipment Maintenance
+      Equipment Administration
+      Building Maintenance
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Business Command and Control" as COMMAND {
+    class "Business Management" as BIZ_MGMT {
+      Business Unit Management
+      Business Unit Financial Analysis
+      Business Unit Direction
+      Business Unit Accounting
+      Business Unit Financial Operations
+      Organization Direction
+    }
+  }
+
+  package "Finance" as FINANCE {
+    class "Financial Services" as FIN_SVC {
+      Financial Statements
+      Financial Control
+      Financial Compliance
+      Enterprise Tax Administration
+    }
+  }
+
+  package "Human Resource Management" as HR {
+    class "HR Services" as HR_SVC {
+      Workforce Training
+      Travel and Expenses
+      Recruitment
+      Human Resources Direction
+      Employee and Contractor Contract
+      Employee Payroll And Incentives
+      Employee Evaluation
+      Employee Data Management
+      Employee Certification
+      Employee Benefits
+      Employee Assignment
+      Employee Access
+    }
+  }
+}
+
+' Row 3
+together {
+  package "Knowledge and Intellectual Property" as KNOWLEDGE {
+    class "Knowledge Services" as KNOWLEDGE_SVC {
+      Management Manual
+      Knowledge Exchange
+      Intellectual Property Portfolio
+    }
+  }
+
+  package "Corporate Relations" as CORPORATE_REL {
+    class "Corporate Services" as CORP_REL {
+      Regulatory And Legal Authority
+      Investor Relations
+      Corporate Relationship
+      Corporate Communications
+      Corporate Alliance and Stake Holder
+    }
+  }
+
+  package "Business Direction" as DIRECTION {
+    class "Strategic Direction" as STRATEGY {
+      Corporate Strategy
+      Corporate Policies
+      Continuity Planning
+      Enterprise Architecture
+      Products and Services Direction
+    }
+  }
+}
+
+' Row 4 - Single package
+package "Document Management and Archive" as DOCS {
+  class "Document Services" as DOC_SVC {
+    Document Directory
+    Correspondence
+    Archive Services
+    Document Services
+  }
+}
+
+' Layout positioning for square arrangement
+IT -[hidden]right- ENTERPRISE
+ENTERPRISE -[hidden]right- FACILITIES
+COMMAND -[hidden]right- FINANCE
+FINANCE -[hidden]right- HR
+KNOWLEDGE -[hidden]right- CORPORATE_REL
+CORPORATE_REL -[hidden]right- DIRECTION
+
+' Vertical connections
+IT -[hidden]down- COMMAND
+ENTERPRISE -[hidden]down- FINANCE
+FACILITIES -[hidden]down- HR
+COMMAND -[hidden]down- KNOWLEDGE
+FINANCE -[hidden]down- CORPORATE_REL
+HR -[hidden]down- DIRECTION
+KNOWLEDGE -[hidden]down- DOCS
+CORPORATE_REL -[hidden]down- DOCS
+DIRECTION -[hidden]down- DOCS
+
+@enduml

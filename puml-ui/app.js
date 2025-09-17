@@ -8,6 +8,7 @@ class BianUMLVisualizer {
         this.selectedDiagrams = new Set();
         this.diagramConfigs = this.initializeDiagramConfigs();
         this.umlContents = new Map();
+        this.largeFontsEnabled = false;
         this.init();
     }
 
@@ -86,10 +87,21 @@ class BianUMLVisualizer {
      * Initialize the application
      */
     async init() {
+        console.log('Initializing BIAN UML Visualizer...');
         this.checkLibrarySupport();
         this.renderDiagramButtons();
         this.attachEventListeners();
         await this.loadAllUMLContents();
+        console.log('BIAN UML Visualizer initialized successfully');
+
+        // Test if font toggle button is accessible
+        setTimeout(() => {
+            const testBtn = document.getElementById('fontSizeToggle');
+            console.log('Font toggle button test:', testBtn ? 'Found' : 'Not found');
+            if (testBtn) {
+                console.log('Button text content:', testBtn.textContent);
+            }
+        }, 500);
     }
 
     /**
@@ -218,6 +230,35 @@ class BianUMLVisualizer {
         document.getElementById('clearBtn').addEventListener('click', () => {
             this.clearSelection();
         });
+
+        // Font size toggle button
+        const fontToggleBtn = document.getElementById('fontSizeToggle');
+        if (fontToggleBtn) {
+            fontToggleBtn.addEventListener('click', (event) => {
+                console.log('Font size toggle button clicked!', event);
+                // Add a simple visual feedback
+                fontToggleBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    fontToggleBtn.style.transform = '';
+                }, 100);
+
+                this.toggleFontSize();
+            });
+            console.log('Font size toggle button event listener attached');
+        } else {
+            console.error('Font size toggle button not found!');
+            // If button not found, try to find it after a delay
+            setTimeout(() => {
+                const retryBtn = document.getElementById('fontSizeToggle');
+                if (retryBtn) {
+                    console.log('Font size toggle button found on retry');
+                    retryBtn.addEventListener('click', () => {
+                        console.log('Font size toggle button clicked (retry)!');
+                        this.toggleFontSize();
+                    });
+                }
+            }, 1000);
+        }
     }
 
     /**
@@ -261,12 +302,12 @@ class BianUMLVisualizer {
      */
     clearSelection() {
         this.selectedDiagrams.clear();
-        
+
         // Reset all buttons
         document.querySelectorAll('.diagram-btn').forEach(button => {
             const checkbox = button.querySelector('div div');
             const checkIcon = button.querySelector('svg');
-            
+
             button.classList.remove('border-blue-500', 'bg-blue-50');
             button.classList.add('border-gray-300');
             checkbox.classList.remove('bg-blue-500', 'border-blue-500');
@@ -276,6 +317,235 @@ class BianUMLVisualizer {
 
         this.updateSelectionUI();
         this.clearVisualization();
+    }
+
+    /**
+     * Toggle font size for better readability
+     */
+    toggleFontSize() {
+        console.log('toggleFontSize method called');
+        this.largeFontsEnabled = !this.largeFontsEnabled;
+        console.log('largeFontsEnabled set to:', this.largeFontsEnabled);
+
+        const toggleButton = document.getElementById('fontSizeToggle');
+        const fontSizeText = document.getElementById('fontSizeText');
+        const visualizationArea = document.getElementById('visualizationArea');
+
+        console.log('DOM elements found:', {
+            toggleButton: !!toggleButton,
+            fontSizeText: !!fontSizeText,
+            visualizationArea: !!visualizationArea
+        });
+
+        if (this.largeFontsEnabled) {
+            toggleButton.classList.add('active');
+            toggleButton.style.backgroundColor = '#22c55e'; // Force green color
+            fontSizeText.textContent = 'Normal Fonts';
+            visualizationArea.classList.add('large-fonts');
+
+            // Add visual indicator
+            const indicator = document.createElement('div');
+            indicator.id = 'font-indicator';
+            indicator.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #22c55e;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-size: 14px;
+                font-weight: 600;
+                z-index: 9999;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            `;
+            indicator.innerHTML = '🔍 Large Fonts Applied!<br><small>Using SVG format</small>';
+            document.body.appendChild(indicator);
+
+            // Remove indicator after 3 seconds
+            setTimeout(() => {
+                if (indicator.parentNode) {
+                    indicator.remove();
+                }
+            }, 3000);
+
+            console.log('Applied large fonts styling - now using SVG format');
+        } else {
+            toggleButton.classList.remove('active');
+            toggleButton.style.backgroundColor = ''; // Reset to default
+            fontSizeText.textContent = 'Larger Fonts';
+            visualizationArea.classList.remove('large-fonts');
+
+            // Remove any existing indicators
+            const existingIndicator = document.getElementById('font-indicator');
+            if (existingIndicator) {
+                existingIndicator.remove();
+            }
+
+            console.log('Removed large fonts styling - reverted to PNG format');
+        }
+
+        // If there's a currently displayed diagram, regenerate it with the new format
+        const hasExistingDiagram = visualizationArea.querySelector('img') || visualizationArea.querySelector('svg') ||
+                                   !visualizationArea.innerHTML.includes('Select diagrams');
+
+        if (hasExistingDiagram && this.selectedDiagrams.size > 0) {
+            console.log('Regenerating current diagram with new font settings...');
+            // Regenerate the current diagram with new font settings
+            setTimeout(() => {
+                this.visualizeSelectedDiagrams();
+            }, 100);
+        } else {
+            // Apply font size to any currently displayed SVG
+            this.applyFontSizeToCurrentSVG();
+        }
+
+        console.log(`Font size ${this.largeFontsEnabled ? 'enabled' : 'disabled'}`);
+    }
+
+    /**
+     * Apply font size settings to currently displayed SVG
+     */
+    applyFontSizeToCurrentSVG() {
+        console.log('applyFontSizeToCurrentSVG called');
+        const visualizationArea = document.getElementById('visualizationArea');
+
+        // Try multiple selectors for SVG elements
+        let svgElement = visualizationArea.querySelector('svg');
+        if (!svgElement) {
+            // Try finding SVG in nested containers
+            const contentWrapper = visualizationArea.querySelector('.max-w-full');
+            if (contentWrapper) {
+                svgElement = contentWrapper.querySelector('svg');
+            }
+        }
+
+        console.log('SVG element found:', !!svgElement);
+        console.log('Visualization area HTML:', visualizationArea.innerHTML.substring(0, 200) + '...');
+
+        if (svgElement) {
+            console.log('SVG element details:', {
+                tagName: svgElement.tagName,
+                className: svgElement.className,
+                id: svgElement.id,
+                width: svgElement.getAttribute('width'),
+                height: svgElement.getAttribute('height')
+            });
+
+            if (this.largeFontsEnabled) {
+                console.log('Applying large fonts to SVG');
+
+                // Method 1: Direct style manipulation
+                svgElement.style.fontSize = '16px';
+                // Remove font-weight to avoid bold text
+
+                // Method 2: Apply to all text elements
+                const textElements = svgElement.querySelectorAll('text');
+                console.log('Found', textElements.length, 'text elements');
+
+                textElements.forEach((text, index) => {
+                    const originalSize = text.getAttribute('font-size') || text.style.fontSize;
+                    console.log(`Text element ${index}: original size "${originalSize}"`);
+
+                    // Try multiple approaches - only change font-size, preserve colors and weights
+                    text.setAttribute('font-size', '16px');
+                    // Don't change font-weight to avoid bold text
+                    text.style.fontSize = '16px';
+                    // Preserve original font-weight and colors
+
+                    console.log(`Updated text element ${index} to 16px (preserved original styling)`);
+                });
+
+                // Method 3: Add CSS class to parent
+                svgElement.classList.add('large-fonts-applied');
+                console.log('Added large-fonts-applied class to SVG');
+
+                // Method 4: Force style injection (only font-size, preserve colors and weights)
+                const styleElement = document.createElement('style');
+                styleElement.textContent = `
+                    #${svgElement.id || 'visualizationArea'} svg text {
+                        font-size: 16px !important;
+                    }
+                    .large-fonts svg text {
+                        font-size: 16px !important;
+                    }
+                    /* Preserve original colors and weights */
+                    .large-fonts svg text[fill="#0000FF"],
+                    .large-fonts svg text[fill="blue"] {
+                        fill: #0000FF !important;
+                    }
+                `;
+                document.head.appendChild(styleElement);
+                console.log('Injected CSS style (size only, preserved styling)');
+
+                // Method 5: Direct SVG content manipulation as last resort
+                try {
+                    const svgContent = svgElement.outerHTML;
+                    let modifiedContent = svgContent;
+
+                    // Replace font-size attributes only, preserve colors and weights
+                    modifiedContent = modifiedContent.replace(/font-size="[^"]*"/g, 'font-size="16px"');
+                    modifiedContent = modifiedContent.replace(/font-size='[^']*'/g, "font-size='16px'");
+
+                    // Don't add font-weight to avoid bold text
+
+                    if (modifiedContent !== svgContent) {
+                        console.log('Direct SVG content modification applied (size only)');
+                        // Replace the SVG element with modified version
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = modifiedContent;
+                        const newSvg = tempDiv.querySelector('svg');
+                        if (newSvg) {
+                            svgElement.parentNode.replaceChild(newSvg, svgElement);
+                            console.log('SVG element replaced with modified version');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error in direct SVG manipulation:', error);
+                }
+
+            } else {
+                console.log('Resetting SVG fonts to normal');
+
+                // Reset all methods - remove font-size but preserve original styling
+                svgElement.style.fontSize = '';
+                svgElement.classList.remove('large-fonts-applied');
+
+                const textElements = svgElement.querySelectorAll('text');
+                textElements.forEach((text, index) => {
+                    text.removeAttribute('font-size');
+                    text.style.fontSize = '';
+                    // Don't remove font-weight or colors - preserve original styling
+                    console.log(`Reset font-size for text element ${index} (preserved original styling)`);
+                });
+
+                // Remove injected styles
+                const styles = document.querySelectorAll('style');
+                styles.forEach(style => {
+                    if (style.textContent.includes('font-size: 16px')) {
+                        style.remove();
+                    }
+                });
+            }
+
+            // Force a re-render
+            setTimeout(() => {
+                visualizationArea.style.display = 'none';
+                visualizationArea.offsetHeight; // Trigger reflow
+                visualizationArea.style.display = '';
+                console.log('Forced re-render of visualization area');
+            }, 10);
+
+        } else {
+            console.log('No SVG element found to apply font size changes');
+            console.log('Available elements in visualization area:');
+            const allElements = visualizationArea.querySelectorAll('*');
+            allElements.forEach((el, index) => {
+                if (index < 10) { // Limit output
+                    console.log(`  ${el.tagName}${el.id ? '#' + el.id : ''}${el.className ? '.' + el.className : ''}`);
+                }
+            });
+        }
     }
 
     /**
@@ -387,6 +657,9 @@ class BianUMLVisualizer {
             `;
             
             // Send UML content to local Flask server
+            // Use SVG format when large fonts are enabled for better font manipulation
+            const format = this.largeFontsEnabled ? 'svg' : 'png';
+
             const response = await fetch('/api/generate-diagram', {
                 method: 'POST',
                 headers: {
@@ -394,7 +667,7 @@ class BianUMLVisualizer {
                 },
                 body: JSON.stringify({
                     uml_content: umlContent,
-                    format: 'svg'
+                    format: format
                 })
             });
             
@@ -407,17 +680,19 @@ class BianUMLVisualizer {
             const contentType = response.headers.get('content-type');
             let diagramContent;
             let isImage = false;
-            
-            if (contentType && contentType.includes('image/')) {
-                // Handle binary image data (PNG, etc.)
+
+            if (contentType && contentType.includes('image/') && !this.largeFontsEnabled) {
+                // Handle binary image data (PNG, etc.) - only when large fonts are NOT enabled
                 const blob = await response.blob();
                 const imageUrl = URL.createObjectURL(blob);
                 diagramContent = imageUrl;
                 isImage = true;
+                console.log('Generated PNG image for normal fonts');
             } else {
-                // Handle text content (SVG)
+                // Handle text content (SVG) - used when large fonts are enabled or for SVG format
                 diagramContent = await response.text();
                 isImage = false;
+                console.log('Generated SVG for large fonts manipulation');
             }
             
             // Create container for the diagram
@@ -439,20 +714,25 @@ class BianUMLVisualizer {
             } else {
                 // Display as SVG
                 contentWrapper.innerHTML = diagramContent;
+
+                // Apply font size settings to the new SVG
+                if (this.largeFontsEnabled) {
+                    setTimeout(() => this.applyFontSizeToCurrentSVG(), 100);
+                }
             }
             
             // Create download buttons
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'flex gap-2 mt-4';
-            
+
             if (isImage) {
-                // For images, create appropriate download button
+                // For images (PNG), create appropriate download button
                 const downloadBtn = document.createElement('button');
                 downloadBtn.className = 'bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
-                downloadBtn.textContent = 'Download Image';
+                downloadBtn.textContent = 'Download PNG';
                 downloadBtn.onclick = () => this.downloadImageFromUrl(diagramContent, 'bian-diagram.png');
                 buttonContainer.appendChild(downloadBtn);
-                
+
                 // Also offer SVG option
                 const downloadSvgBtn = document.createElement('button');
                 downloadSvgBtn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
@@ -460,13 +740,13 @@ class BianUMLVisualizer {
                 downloadSvgBtn.onclick = () => this.downloadAsSVG(umlContent);
                 buttonContainer.appendChild(downloadSvgBtn);
             } else {
-                // For SVG, create SVG download button
+                // For SVG (when large fonts are enabled), create SVG download button
                 const downloadBtn = document.createElement('button');
                 downloadBtn.className = 'bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
                 downloadBtn.textContent = 'Download SVG';
-                downloadBtn.onclick = () => this.downloadSVGContent(diagramContent, 'bian-diagram.svg');
+                downloadBtn.onclick = () => this.downloadSVGContent(diagramContent, 'bian-diagram-large-fonts.svg');
                 buttonContainer.appendChild(downloadBtn);
-                
+
                 // Also offer PNG option
                 const downloadPngBtn = document.createElement('button');
                 downloadPngBtn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
@@ -524,6 +804,7 @@ class BianUMLVisualizer {
      */
     async downloadAsPNG(umlContent) {
         try {
+            console.log('Downloading PNG...');
             const response = await fetch('/api/generate-diagram', {
                 method: 'POST',
                 headers: {
@@ -534,14 +815,14 @@ class BianUMLVisualizer {
                     format: 'png'
                 })
             });
-            
+
             if (!response.ok) {
                 throw new Error('Failed to generate PNG');
             }
-            
+
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
-            
+
             const a = document.createElement('a');
             a.href = url;
             a.download = `bian-diagram-${Date.now()}.png`;
@@ -549,7 +830,9 @@ class BianUMLVisualizer {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
+
+            console.log('PNG download completed');
+
         } catch (error) {
             console.error('Error downloading PNG:', error);
             alert('Error downloading PNG: ' + error.message);
@@ -561,6 +844,7 @@ class BianUMLVisualizer {
      */
     async downloadAsSVG(umlContent) {
         try {
+            console.log('Downloading SVG...');
             const response = await fetch('/api/generate-diagram', {
                 method: 'POST',
                 headers: {
@@ -571,18 +855,43 @@ class BianUMLVisualizer {
                     format: 'svg'
                 })
             });
-            
+
             if (!response.ok) {
                 throw new Error('Failed to generate SVG');
             }
-            
+
             const svgContent = await response.text();
+
+            // Apply font size if large fonts are enabled
+            if (this.largeFontsEnabled) {
+                console.log('Applying large fonts to downloaded SVG');
+                svgContent = this.applyLargeFontsToSVGContent(svgContent);
+            }
+
             this.downloadSVGContent(svgContent, `bian-diagram-${Date.now()}.svg`);
-            
+            console.log('SVG download completed');
+
         } catch (error) {
             console.error('Error downloading SVG:', error);
             alert('Error downloading SVG: ' + error.message);
         }
+    }
+
+    /**
+     * Apply large fonts to SVG content before download (size only, preserve colors)
+     */
+    applyLargeFontsToSVGContent(svgContent) {
+        let modifiedContent = svgContent;
+
+        // Replace font-size attributes only, preserve colors and weights
+        modifiedContent = modifiedContent.replace(/font-size="[^"]*"/g, 'font-size="16px"');
+        modifiedContent = modifiedContent.replace(/font-size='[^']*'/g, "font-size='16px'");
+
+        // Don't add font-weight to avoid bold text
+        // Preserve original blue colors and other styling
+
+        console.log('Applied large fonts to SVG content for download (size only, preserved styling)');
+        return modifiedContent;
     }
 
     /**
@@ -607,7 +916,15 @@ class BianUMLVisualizer {
      */
     clearVisualization() {
         const visualizationArea = document.getElementById('visualizationArea');
-        visualizationArea.innerHTML = '<p class="text-gray-500">Select diagrams and click "Visualize UML" to see the rendered diagrams</p>';
+        visualizationArea.innerHTML = `
+            <div class="text-center">
+                <svg class="w-16 h-16 text-gray-400 mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 002-2M9 7a2 2 0 012 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 002-2"></path>
+                </svg>
+                <p class="text-gray-500 mb-2">Select diagrams and click "Visualize UML" to see the rendered diagrams</p>
+                <p class="text-xs text-gray-400">Supports individual diagrams and combined multi-diagram views</p>
+            </div>
+        `;
     }
 
     /**
@@ -631,6 +948,12 @@ class BianUMLVisualizer {
         };
     }
 }
+
+// Global test function for button
+window.testFontToggle = function() {
+    console.log('Global testFontToggle called!');
+    alert('Button clicked! Font toggle test function executed.');
+};
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

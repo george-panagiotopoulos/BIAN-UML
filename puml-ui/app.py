@@ -207,12 +207,97 @@ def convert_svg_to_png(svg_content):
 def generate_plantuml_diagram(uml_content, output_format='svg'):
     """Generate diagram using local PlantUML jar with local output directory"""
     try:
+        # Helper: detect if returned SVG is an error image produced by PlantUML
+        def is_error_svg(svg_text: str) -> bool:
+            if not svg_text:
+                return True
+            indicators = [
+                "An error has occured",  # legacy spelling from PlantUML
+                "An error has occurred",
+                "GraphViz",
+                "plantuml.com/qa",
+                "java.lang.",
+                "UnparsableGraphvizException",
+            ]
+            return any(indicator in svg_text for indicator in indicators)
+
+        # Helper: run PlantUML via stdin/stdout (no temp files)
+        def run_plantuml_pipe(graphviz_dot: str | None):
+            cmd = [
+                'java',
+                '-Djava.awt.headless=true',
+            ]
+            if graphviz_dot is None:
+                # auto-detect
+                pass
+            elif graphviz_dot == "":
+                # Disable GraphViz completely (empty property)
+                cmd.append('-DGRAPHVIZ_DOT=')
+            else:
+                cmd.append(f'-DGRAPHVIZ_DOT={graphviz_dot}')
+
+            cmd += [
+                '-jar', str(PLANTUML_JAR),
+                f'-t{output_format}',
+                '-charset', 'UTF-8',
+                '-pipe',
+            ]
+
+            # For SVG we can capture as text; for PNG/JPG capture bytes
+            capture_as_text = (output_format == 'svg')
+            try:
+                result = subprocess.run(
+                    cmd,
+                    input=uml_content if capture_as_text else uml_content.encode('utf-8'),
+                    capture_output=True,
+                    text=capture_as_text,
+                    timeout=30
+                )
+                print(f"🧪 PIPE try ({graphviz_dot if graphviz_dot is not None else 'auto'}): exit={result.returncode}")
+                if result.stderr:
+                    print(f"⚠️  PIPE stderr: {result.stderr}")
+                    err_text = result.stderr if isinstance(result.stderr, str) else result.stderr.decode('utf-8', 'ignore')
+                    error_indicators = [
+                        'Cannot run program',
+                        'No such file or directory',
+                        'UnparsableGraphvizException',
+                        'java.lang.IllegalStateException',
+                    ]
+                    if any(x in err_text for x in error_indicators):
+                        return { 'success': False, 'error': err_text }
+
+                if result.returncode != 0:
+                    return { 'success': False, 'error': result.stderr or 'Non-zero exit' }
+
+                content = result.stdout if capture_as_text else result.stdout  # stdout contains bytes when text=False
+                if not capture_as_text:
+                    # When text=False, result.stdout is bytes
+                    content = result.stdout
+
+                if output_format == 'svg' and isinstance(content, str) and is_error_svg(content):
+                    return { 'success': False, 'error': 'PlantUML returned error SVG' }
+
+                # Heuristic: very small PNG likely error
+                if output_format == 'png' and isinstance(content, (bytes, bytearray)) and len(content) < 1000:
+                    return { 'success': False, 'error': 'PNG too small from PIPE' }
+
+                return { 'success': True, 'content': content }
+
+            except subprocess.TimeoutExpired:
+                return { 'success': False, 'error': 'PIPE timeout' }
+            except Exception as e:
+                return { 'success': False, 'error': f'PIPE exception: {e}' }
+
         # Ensure output directory exists
         OUTPUT_DIR.mkdir(exist_ok=True)
-        
-        # Create unique filename
+
+        # Create per-run output subdirectory to avoid cross-run collisions
         unique_id = str(uuid.uuid4())[:8]
-        input_file = OUTPUT_DIR / f"diagram_{unique_id}.puml"
+        RUN_DIR = OUTPUT_DIR / f"run_{unique_id}"
+        RUN_DIR.mkdir(exist_ok=True)
+
+        # Create unique filename inside run dir
+        input_file = RUN_DIR / f"diagram_{unique_id}.puml"
         
         # Write UML content to file
         with open(input_file, 'w', encoding='utf-8') as f:
@@ -220,46 +305,39 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
         
         print(f"📝 Created input file: {input_file}")
         
-        # Prepare PlantUML command - output to the same directory
-        # Try different approaches based on format and complexity
+        # First attempt: PIPE mode (no filesystem). Prefer detected PATH GraphViz, skip non-existent hardcoded paths
+        detected = check_graphviz_installations()
+        detected_paths = [inst['path'] for inst in detected if os.path.exists(inst['path'])]
+        hardcoded_paths = [p for p in ['/opt/homebrew/bin/dot', '/usr/local/bin/dot'] if os.path.exists(p)]
+        pipe_attempts = detected_paths + hardcoded_paths + [None, ""]
+        for gv in pipe_attempts:
+            pipe_res = run_plantuml_pipe(gv)
+            if pipe_res.get('success'):
+                return {
+                    'success': True,
+                    'content': pipe_res['content'],
+                    'format': output_format,
+                    'method': f'pipe:{gv if gv is not None else "auto"}'
+                }
+            else:
+                print(f"❌ PIPE attempt failed ({gv if gv is not None else 'auto'}): {pipe_res.get('error')}")
+
+        # Fallback: file-based generation to support environments where -pipe might fail
         base_cmd = [
-            'java', '-jar', str(PLANTUML_JAR),
-            f'-t{output_format}',  # Output format
-            '-charset', 'UTF-8',   # Character encoding
-            '-o', str(OUTPUT_DIR), # Output directory
+            'java', '-Djava.awt.headless=true', '-jar', str(PLANTUML_JAR),
+            f'-t{output_format}',
+            '-charset', 'UTF-8',
+            '-o', str(RUN_DIR),
         ]
         
-        # Try different GraphViz configurations
-        # 1. Try with Homebrew GraphViz path
-        homebrew_dot_path = '/opt/homebrew/bin/dot'
-        cmd_homebrew_graphviz = base_cmd + [
-            f'-DGRAPHVIZ_DOT={homebrew_dot_path}',
-            str(input_file)
-        ]
-        
-        # 2. Try with system GraphViz
-        system_dot_path = '/usr/local/bin/dot'
-        cmd_system_graphviz = base_cmd + [
-            f'-DGRAPHVIZ_DOT={system_dot_path}',
-            str(input_file)
-        ]
-        
-        # 3. Try with default GraphViz (auto-detect)
-        cmd_auto_graphviz = base_cmd + [str(input_file)]
-        
-        # 4. Try without GraphViz (fallback)
-        cmd_no_graphviz = base_cmd + [
-            '-DGRAPHVIZ_DOT=""',
-            str(input_file)
-        ]
-        
-        # Try multiple execution strategies in order of preference
-        execution_attempts = [
-            ("with Homebrew GraphViz", cmd_homebrew_graphviz),
-            ("with System GraphViz", cmd_system_graphviz), 
-            ("with Auto-detect GraphViz", cmd_auto_graphviz),
-            ("without GraphViz", cmd_no_graphviz),
-        ]
+        # Try different GraphViz configurations: prefer detected PATH first
+        execution_attempts = []
+        for dot_path in detected_paths + hardcoded_paths:
+            execution_attempts.append((f"with GraphViz at {dot_path}", base_cmd + [f'-DGRAPHVIZ_DOT={dot_path}', str(input_file)]))
+        # Auto-detect
+        execution_attempts.append(("with Auto-detect GraphViz", base_cmd + [str(input_file)]))
+        # Disable GraphViz (empty property value - no quotes)
+        execution_attempts.append(("without GraphViz", base_cmd + ['-DGRAPHVIZ_DOT=', str(input_file)]))
         
         result = None
         successful_cmd = None
@@ -281,6 +359,17 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
                 if result.stderr:
                     print(f"⚠️  PlantUML stderr: {result.stderr}")
                 
+                # Treat GraphViz exceptions in stderr as failure even if exit code is 0
+                err_text = result.stderr or ""
+                if any(token in err_text for token in [
+                    'UnparsableGraphvizException',
+                    'java.lang.IllegalStateException',
+                    'Cannot run program',
+                    'No such file or directory'
+                ]):
+                    print(f"❌ Treating as failure due to GraphViz error in stderr for {attempt_name}")
+                    continue
+
                 if result.returncode == 0:
                     successful_cmd = attempt_name
                     print(f"✅ Success with {attempt_name}")
@@ -335,16 +424,10 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
             OUTPUT_DIR / "png" / f"{input_file.stem}.{output_format}",   # Stem in subdir
         ]
         
-        # Scan all subdirectories for files with correct extension
-        all_output_files = []
-        for pattern in [f"*.{output_format}", f"**/*.{output_format}"]:
-            all_output_files.extend(list(OUTPUT_DIR.glob(pattern)))
-        
-        print(f"📁 Found {output_format} files in output directory tree: {[str(f.relative_to(OUTPUT_DIR)) for f in all_output_files]}")
-        
-        # Find the most recently created file with correct extension
+        # Only consider files with the unique stem to avoid picking unrelated outputs
+        all_output_files = list(RUN_DIR.glob(f"{input_file.stem}*.{output_format}"))
+        print(f"📁 Candidate {output_format} files for this run: {[str(f.name) for f in all_output_files]}")
         if all_output_files:
-            # Sort by modification time, get the newest
             newest_file = max(all_output_files, key=lambda f: f.stat().st_mtime)
             possible_output_files.insert(0, newest_file)
         
@@ -356,16 +439,46 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
                 break
         
         if not output_file:
-            all_files = list(OUTPUT_DIR.iterdir())
+            # No output file generated despite successful exit; fallback gracefully
+            if output_format == 'svg':
+                print("⚠️ No SVG produced; returning text-based fallback SVG")
+                return generate_text_fallback_diagram(uml_content)
+            if output_format == 'png':
+                print("⚠️ No PNG produced; generating text-based SVG then converting to PNG")
+                svg_fb = generate_text_fallback_diagram(uml_content)
+                if svg_fb.get('success'):
+                    png_conv = convert_svg_to_png(svg_fb['content'])
+                    if png_conv.get('success'):
+                        return {
+                            'success': True,
+                            'content': png_conv['content'],
+                            'format': 'png',
+                            'method': f"text-fallback SVG -> PNG via {png_conv.get('method','unknown')}"
+                        }
+                return {
+                    'success': False,
+                    'error': 'Failed to generate output via PlantUML and fallback conversion'
+                }
+            # Other formats unsupported for fallback
+            all_files = [f.name for f in RUN_DIR.iterdir()]
+            expected_names = [str(p.name) for p in possible_output_files]
             return {
                 'success': False,
-                'error': f'Output file not generated. Expected: {expected_output_file}. All files in {OUTPUT_DIR}: {[f.name for f in all_files]}'
+                'error': (
+                    'Output file not generated. '
+                    f'Expected one of: {expected_names}. '
+                    f'All files in {RUN_DIR}: {all_files}'
+                )
             }
         
         # Read generated content
         if output_format == 'svg':
             with open(output_file, 'r', encoding='utf-8') as f:
                 content = f.read()
+            # Detect error SVGs and fallback to text-based simplified SVG
+            if content and is_error_svg(content):
+                print("⚠️ Detected PlantUML error SVG. Using text-based fallback.")
+                return generate_text_fallback_diagram(uml_content)
         else:
             with open(output_file, 'rb') as f:
                 content = f.read()
@@ -402,6 +515,15 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
             input_file.unlink()
             print(f"🧹 Cleaned up input file: {input_file}")
         except:
+            pass
+
+        # Optional: clean run directory if empty
+        try:
+            remaining = list(RUN_DIR.iterdir())
+            if len(remaining) == 1 and remaining[0] == output_file:
+                # keep output; otherwise leave run dir contents for debugging
+                pass
+        except Exception as _:
             pass
         
         return {

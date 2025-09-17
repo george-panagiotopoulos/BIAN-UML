@@ -1,0 +1,149 @@
+@startuml Combined BIAN Diagrams
+
+title Combined BIAN Architecture Domains
+
+!define LAYOUT top to bottom direction
+
+' === Channels Domain ===
+' Row 1
+together {
+  package "Channel Specific" as CHANNEL_SPECIFIC {
+    class "Digital Channels" as DIGITAL {
+      eBranch Management
+      eBranch Operations
+      Advanced Voice Services Management
+      Advanced Voice Services Operations
+      Card Terminal Administration
+      Card Terminal Operation
+    }
+
+    class "Branch Operations" as BRANCH {
+      Branch Location Management
+      Branch Network Management
+      Branch Location Operations
+      Branch Currency Management
+      Branch Currency Distribution
+      Product Inventory Item Management
+      Product Inventory Distribution
+    }
+
+    class "ATM Operations" as ATM {
+      ATM Network Management
+      ATM Network Operations
+    }
+
+    class "Contact Center" as CONTACT {
+      Contact Center Management
+      Contact Center Operations
+    }
+  }
+}
+
+' Row 2
+package "Cross Channel" as CROSS_CHANNEL {
+  class "Cross Channel Services" as CROSS_CHAN {
+    Party Authentication
+    Transaction Authorization
+    Point of Service
+    Servicing Event History
+    Contact Routing
+    Session Dialogue
+    Interactive Help
+    Contact Handler
+    Customer Workbench
+    Servicing Activity Analysis
+    Service Directory
+  }
+}
+
+' Layout positioning
+CHANNEL_SPECIFIC -[hidden]down- CROSS_CHANNEL
+
+' === Products, Loans & Cards Domain ===
+' Row 1
+together {
+  package "Product Specific Fulfillment" as PRODUCTS {
+    class "Deposits & Accounts <color:#0000FF>(Temenos: Deposits module)</color>" as DEP {
+      <color:#0000FF>Current Account</color>
+      <color:#0000FF>Savings Account</color>
+      <color:#0000FF>Term Deposit</color>
+      Term Deposit Framework Agreement
+      <color:#0000FF>Multicurrency Account</color>
+      <color:#0000FF>Standing Order</color>
+      Virtual Account
+    }
+
+    class "Retail Lending <color:#0000FF>(Temenos: Lending module)</color>" as RETAIL_LENDING {
+      <color:#0000FF>Consumer Loan</color>
+      <color:#0000FF>Mortgage Loan</color>
+      <color:#0000FF>Merchandising Loan</color>
+      Leasing
+      Leasing Item Administration
+    }
+
+    class "Corporate Lending" as CORP_LENDING {
+      Corporate Loan
+      Syndicated Loan
+      Project Finance
+      Corporate Lease
+    }
+
+    class "Corporate Banking" as CORP {
+      Corporate Current Account
+      Cash Management And Account Services
+      Direct Debit Mandate
+      Direct Debit
+      Cheque Lock Box
+      Cash Concentration
+      Notional Pooling
+      Corporate Payroll Services
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Cards" as CARDS {
+    class "Card Services" as CARD_SVC {
+      Credit Card
+      Card Authorization
+      Card Transaction Capture
+      Merchant Relations
+      Merchant Acquiring Facility
+      Card Network Participant Facility
+      Credit Card Position Keeping
+    }
+  }
+
+  package "Corporate Financing and Advisory" as CORP_FIN {
+    class "Financing Services" as FIN_SVC {
+      Public Offering
+      Private Placement
+      Mergers and Acquisitions Advisory
+      Corporate Tax Advisory
+      Corporate Finance
+    }
+  }
+
+  package "Trade Banking" as TRADE {
+    class "Trade Finance" as TRADE_FIN {
+      Letter of Credit
+      Bank Guarantee
+      Credit Management
+      Factoring
+      Documentary Collections
+    }
+  }
+}
+
+' Layout positioning
+CARDS -[hidden]right- CORP_FIN
+CORP_FIN -[hidden]right- TRADE
+PRODUCTS -[hidden]down- CARDS
+PRODUCTS -[hidden]down- CORP_FIN
+PRODUCTS -[hidden]down- TRADE
+
+' Additional positioning for new lending sections
+RETAIL_LENDING -[hidden]right- CORP_LENDING
+
+@enduml

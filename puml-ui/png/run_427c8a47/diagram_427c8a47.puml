@@ -1,0 +1,99 @@
+@startuml BIAN Product, Loans, Cards & Financing
+
+title BIAN Product, Loans, Cards & Financing Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "Product Specific Fulfillment" as PRODUCTS {
+    class "Deposits & Accounts <color:#0000FF>(Temenos: Deposits module)</color>" as DEP {
+      <color:#0000FF>Current Account</color>
+      <color:#0000FF>Savings Account</color>
+      <color:#0000FF>Term Deposit</color>
+      Term Deposit Framework Agreement
+      <color:#0000FF>Multicurrency Account</color>
+      <color:#0000FF>Standing Order</color>
+      Virtual Account
+    }
+
+    class "Retail Lending <color:#0000FF>(Temenos: Lending module)</color>" as RETAIL_LENDING {
+      <color:#0000FF>Consumer Loan</color>
+      <color:#0000FF>Mortgage Loan</color>
+      <color:#0000FF>Merchandising Loan</color>
+      Leasing
+      Leasing Item Administration
+    }
+
+    class "Corporate Lending" as CORP_LENDING {
+      Corporate Loan
+      Syndicated Loan
+      Project Finance
+      Corporate Lease
+    }
+
+    class "Corporate Banking" as CORP {
+      Corporate Current Account
+      Cash Management And Account Services
+      Cash Concentration
+      Notional Pooling
+      Corporate Payroll Services
+      Fiduciary Agreement
+    }
+
+    class "Limits & Collateral" as LIMITS_COLLATERAL {
+      Credit Management
+      Collateral Asset Administration
+      Guarantee
+      Exposure Management
+      Credit Line Management
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Cards" as CARDS {
+    class "Card Services" as CARD_SVC {
+      Credit Card
+      Card Authorization
+      Card Transaction Capture
+      Merchant Relations
+      Merchant Acquiring Facility
+      Card Network Participant Facility
+      Credit Card Position Keeping
+    }
+  }
+
+  package "Corporate Financing and Advisory" as CORP_FIN {
+    class "Financing Services" as FIN_SVC {
+      Public Offering
+      Private Placement
+      Mergers and Acquisitions Advisory
+      Corporate Tax Advisory
+      Corporate Finance
+    }
+  }
+
+  package "Trade Banking" as TRADE {
+    class "Trade Finance" as TRADE_FIN {
+      Letter of Credit
+      Bank Guarantee
+      Factoring
+      Documentary Collections
+    }
+  }
+}
+
+' Layout positioning
+CARDS -[hidden]right- CORP_FIN
+CORP_FIN -[hidden]right- TRADE
+PRODUCTS -[hidden]down- CARDS
+PRODUCTS -[hidden]down- CORP_FIN
+PRODUCTS -[hidden]down- TRADE
+
+' Additional positioning for new sections
+RETAIL_LENDING -[hidden]right- CORP_LENDING
+PRODUCTS -[hidden]down- LIMITS_COLLATERAL
+
+@enduml

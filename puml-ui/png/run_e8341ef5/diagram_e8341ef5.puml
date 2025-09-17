@@ -1,0 +1,286 @@
+@startuml Combined BIAN Diagrams
+
+title Combined BIAN Architecture Domains
+
+!define LAYOUT top to bottom direction
+
+' === Customer Servicing Domain ===
+' Row 1
+together {
+  package "Customer Management" as CUST_MGMT {
+    class "Customer Relationship" as CRM {
+      Customer Relationship Management
+      Customer Product And Service Eligibility
+      Customer Agreement
+      Sales Product Agreement
+      Customer Access En      Customer Behavior Insights
+      Customer Credit Rating
+      Account Recovery
+      Customer Event History
+      Customer Proposition
+      Customer Product and Service Directory
+    }
+
+    class "Party Management <color:#0000FF>(Temenos: Party module)</color>" as PARTY {
+      <color:#0000FF>Party Reference Data Directory</color>
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Servicing" as SERVICING {
+    class "Servicing Services" as SVC {
+      Servicing Issue
+      Customer Case Management
+      Case Root Cause Analysis
+      Customer Case
+      Card Case
+      Servicing Order
+      Servicing Mandate
+    }
+  }
+
+  package "Consumer Services" as CONSUMER {
+    class "Consumer Banking" as CONS {
+      Corporate Trust Services
+      Currency Exchange
+      Bank Drafts
+      Brokered Product
+      Consumer Investments
+      Customer Tax Handling
+      Consumer Advisory Services
+      Trust Services
+    }
+  }
+}
+
+' Layout positioning
+SERVICING -[hidden]right- CONSUMER
+CUST_MGMT -[hidden]down- SERVICING
+CUST_MGMT -[hidden]down- CONSUMER
+
+' === Marketing & Sales Domain ===
+left to right direction
+
+package "Marketing" as MARKETING {
+  class "Marketing Services" as MKT {
+    Business Development
+    Brand Management
+    Advertising
+    Promotional Events
+    Prospect Campaign Design
+    Customer Campaign Management
+    Customer Campaign Design
+    Customer Surveys
+    Prospect Campaign Management
+  }
+}
+
+package "Sales" as SALES {
+  class "Sales Services" as SALES_SVC {
+    Prospect Campaign Execution
+    Party Lifecycle Management
+    Lead and Opportunity Management
+    Customer Campaign Execution
+    Customer Offer
+    Sales Planning
+    Underwriting
+    Commission Agreement
+    Commissions
+    Product Matching
+    Product Expert Sales Support
+    Product Sales Support
+    Sales Product
+  }
+}
+
+' Position for more compact layout
+MARKETING -[hidden]down- SALES
+
+' === Products, Loans & Cards Domain ===
+' Row 1 - Deposits & Retail Lending
+together {
+  package "Deposits & Accounts" as DEP {
+    class "Deposits & Accounts <color:#0000FF>(Temenos: Deposits module)</color>" as DEP_SVC {
+      <color:#0000FF>Current Account</color>
+      <color:#0000FF>Savings Account</color>
+      <color:#0000FF>Term Deposit</color>
+      Term Deposit Framework Agreement
+      <color:#0000FF>Multicurrency Account</color>
+      <color:#0000FF>Standing Order</color>
+      Virtual Account
+    }
+  }
+
+  package "Retail Lending" as RETAIL_LENDING_PKG {
+    class "Retail Lending <color:#0000FF>(Temenos: Lending module)</color>" as RETAIL_LENDING {
+      <color:#0000FF>Consumer Loan</color>
+      <color:#0000FF>Mortgage Loan</color>
+      <color:#0000FF>Merchandising Loan</color>
+      Leasing
+      Leasing Item Administration
+    }
+  }
+}
+
+' Row 2 - Corporate Services
+together {
+  package "Corporate Deposits" as CORP_BANKING_PKG {
+    class "Corporate Deposits" as CORP {
+      Corporate Current Account
+      Cash Management And Account Services
+      Cash Concentration
+      Notional Pooling
+      Corporate Payroll Services
+      Fiduciary Agreement
+    }
+  }
+
+  package "Corporate Lending" as CORP_LENDING_PKG {
+    class "Corporate Lending" as CORP_LENDING {
+      Corporate Loan
+      Syndicated Loan
+      Project Finance
+      Corporate Lease
+      Loan Syndication
+    }
+  }
+}
+
+' Row 3 - Risk & Cards
+together {
+  package "Limits & Collateral" as LIMITS_COLLATERAL_PKG {
+    class "Limits & Collateral" as LIMITS_COLLATERAL {
+      Credit Management
+      Collateral Asset Administration
+      Guarantee
+      Exposure Management
+      Credit Line Management
+      Credit Facility
+      Limit and Exposure Management
+    }
+  }
+
+  package "Cards" as CARDS {
+    class "Card Services" as CARD_SVC {
+      Credit Card
+      Card Authorization
+      Card Transaction Capture
+      Merchant Relations
+      Merchant Acquiring Facility
+      Card Network Participant Facility
+      Credit Card Position Keeping
+    }
+  }
+}
+
+' Row 4 - Financing & Trade
+together {
+  package "Corporate Financing and Advisory" as CORP_FIN {
+    class "Financing Services" as FIN_SVC {
+      Public Offering
+      Private Placement
+      Mergers and Acquisitions Advisory
+      Corporate Tax Advisory
+      Corporate Finance
+    }
+  }
+
+  package "Trade Banking" as TRADE {
+    class "Trade Finance" as TRADE_FIN {
+      Letter of Credit
+      Bank Guarantee
+      Factoring
+      Documentary Collections
+    }
+  }
+}
+
+' Layout positioning for 2x4 grid
+' Row 1 connections
+DEP -[hidden]right- RETAIL_LENDING_PKG
+
+' Row 2 connections
+CORP_BANKING_PKG -[hidden]right- CORP_LENDING_PKG
+
+' Row 3 connections
+LIMITS_COLLATERAL_PKG -[hidden]right- CARDS
+
+' Row 4 connections
+CORP_FIN -[hidden]right- TRADE
+
+' Vertical connections between rows
+DEP -[hidden]down- CORP_BANKING_PKG
+RETAIL_LENDING_PKG -[hidden]down- CORP_LENDING_PKG
+CORP_LENDING_PKG -[hidden]down- LIMITS_COLLATERAL_PKG
+CORP_BANKING_PKG -[hidden]down- CARDS
+LIMITS_COLLATERAL_PKG -[hidden]down- CORP_FIN
+CARDS -[hidden]down- TRADE
+
+' === Reference & Market Data Domain ===
+' Row 1
+together {
+  package "Party" as PARTY {
+    class "Party Data" as PARTY_DATA {
+      Party Routing Profile
+      Legal Entity Directory
+    }
+  }
+
+  package "External Agency" as EXTERNAL {
+    class "External Services" as EXT_SVC {
+      Information Provider Administration
+      Syndicate Management
+      Interbank Relationship Management
+      Correspondent Bank Relationship Management
+      Correspondent Bank Directory
+      Sub Custodian Agreement
+      Product Service Agency
+      Product Broker Agreement
+      Contractor and Supplier Agreement
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Market Data" as MARKET_DATA {
+    class "Market Information" as MKT_INFO {
+      Information Provider Operation
+      Market Information Management
+      Financial Market Analysis
+      Financial Market Research
+      Quant Model
+      Market Data Switch Administration
+      Market Data Switch Operation
+    }
+
+    class "Financial Instruments" as INSTRUMENTS {
+      Financial Instrument Reference Data Management
+      Counterparty Administration
+      Public Reference Data Management
+      Location Data Management
+    }
+  }
+
+  package "Product Management" as PRODUCT_MGMT {
+    class "Product Services <color:#0000FF>(Temenos: Product Catalogue module and Pricing module)</color>" as PROD {
+      <color:#0000FF>Product Design (Product Catalogue)</color>
+      <color:#0000FF>Product Deployment (Product Catalogue)</color>
+      Product Training
+      Product Quality Assurance
+      <color:#0000FF>Discount Pricing (Pricing)</color>
+      <color:#0000FF>Product Directory (Product Catalogue)</color>
+      <color:#0000FF>Special Pricing Conditions (Pricing)</color>
+    }
+  }
+}
+
+' Layout positioning
+PARTY -[hidden]right- EXTERNAL
+MARKET_DATA -[hidden]right- PRODUCT_MGMT
+PARTY -[hidden]down- MARKET_DATA
+EXTERNAL -[hidden]down- PRODUCT_MGMT
+
+@enduml

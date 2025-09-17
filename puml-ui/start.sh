@@ -95,7 +95,24 @@ start_server() {
     echo "   Server URL: http://localhost:7777"
     echo "   Press Ctrl+C to stop the server"
     echo "========================================"
-    
+    # Prefer Homebrew Graphviz if available (session-only, does not modify your shell config)
+    if [ -x "/opt/homebrew/bin/brew" ]; then
+        eval "$('/opt/homebrew/bin/brew' shellenv)"
+        export PATH="/opt/homebrew/bin:$PATH"
+    elif [ -x "/usr/local/bin/brew" ]; then
+        eval "$('/usr/local/bin/brew' shellenv)"
+        export PATH="/usr/local/bin:$PATH"
+    fi
+
+    echo "🔧 Diagnostics:"
+    echo "   brew path: $(command -v brew || echo 'not found')"
+    echo "   dot  path: $(command -v dot || echo 'not found')"
+    if command -v dot >/dev/null 2>&1; then
+        dot -V 2>&1 | sed 's/^/   /'
+    else
+        echo "   Graphviz 'dot' not found in PATH"
+    fi
+
     # Start the Python Flask server
     python3 app.py
 }

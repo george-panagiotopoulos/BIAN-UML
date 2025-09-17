@@ -1,0 +1,63 @@
+@startuml BIAN Customer Management & Servicing
+
+title BIAN Customer Management & Servicing Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "Customer Management" as CUST_MGMT {
+    class "Customer Relationship" as CRM {
+      Customer Relationship Management
+      Customer Product And Service Eligibility
+      Customer Agreement
+      Sales Product Agreement
+      Customer Access Entitlement
+      Customer Behavior Insights
+      Customer Credit Rating
+      Account Recovery
+      Customer Event History
+      Customer Proposition
+      Customer Product and Service Directory
+    }
+
+    class "Party Management" as PARTY {
+      Party Reference Data Directory
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Servicing" as SERVICING {
+    class "Servicing Services" as SVC {
+      Servicing Issue
+      Customer Case Management
+      Case Root Cause Analysis
+      Customer Case
+      Card Case
+      Servicing Order
+      Servicing Mandate
+    }
+  }
+
+  package "Consumer Services" as CONSUMER {
+    class "Consumer Banking" as CONS {
+      Corporate Trust Services
+      Currency Exchange
+      Bank Drafts
+      Brokered Product
+      Consumer Investments
+      Customer Tax Handling
+      Consumer Advisory Services
+      Trust Services
+    }
+  }
+}
+
+' Layout positioning
+SERVICING -[hidden]right- CONSUMER
+CUST_MGMT -[hidden]down- SERVICING
+CUST_MGMT -[hidden]down- CONSUMER
+
+@enduml

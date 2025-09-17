@@ -1,0 +1,272 @@
+@startuml Combined BIAN Diagrams
+
+title Combined BIAN Architecture Domains
+
+!define LAYOUT top to bottom direction
+
+' === Business Support Domain ===
+' Row 1
+together {
+  package "IT Management" as IT {
+    class "IT Services" as IT_SVC {
+      Systems Operations
+      Systems Assurance
+      Systems Administration
+      System Development
+      System Deployment
+      Production Release
+      Platform Operations
+      IT Systems Direction
+      IT Standards And Guidelines
+      Internal Network Operation
+      Development Environment
+      Systems Help Desk
+      Operational Gateway
+    }
+  }
+
+  package "Non-IT Enterprise Services" as ENTERPRISE {
+    class "Enterprise Services" as ENT_SVC {
+      Security Assurance
+      Security Advisory
+      Procurement
+      Legal Compliance
+      Internal Audit
+      Fixed Asset Register
+      Company Billing and Payments
+      Approved Supplier Directory
+      Legal Advisory
+    }
+  }
+
+  package "Buildings Equipment and Facilities" as FACILITIES {
+    class "Facilities Management" as FACIL {
+      Utilities Administration
+      Site Operations
+      Site Administration
+      Property Portfolio
+      Equipment Maintenance
+      Equipment Administration
+      Building Maintenance
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Business Command and Control" as COMMAND {
+    class "Business Management" as BIZ_MGMT {
+      Business Unit Management
+      Business Unit Financial Analysis
+      Business Unit Direction
+      Business Unit Accounting
+      Business Unit Financial Operations
+      Organization Direction
+    }
+  }
+
+  package "Finance" as FINANCE {
+    class "Financial Services" as FIN_SVC {
+      Financial Statements
+      Financial Control
+      Financial Compliance
+      Enterprise Tax Administration
+    }
+  }
+
+  package "Human Resource Management" as HR {
+    class "HR Services" as HR_SVC {
+      Workforce Training
+      Travel and Expenses
+      Recruitment
+      Human Resources Direction
+      Employee and Contractor Contract
+      Employee Payroll And Incentives
+      Employee Evaluation
+      Employee Data Management
+      Employee Certification
+      Employee Benefits
+      Employee Assignment
+      Employee Access
+    }
+  }
+}
+
+' Row 3
+together {
+  package "Knowledge and Intellectual Property" as KNOWLEDGE {
+    class "Knowledge Services" as KNOWLEDGE_SVC {
+      Management Manual
+      Knowledge Exchange
+      Intellectual Property Portfolio
+    }
+  }
+
+  package "Corporate Relations" as CORPORATE_REL {
+    class "Corporate Services" as CORP_REL {
+      Regulatory And Legal Authority
+      Investor Relations
+      Corporate Relationship
+      Corporate Communications
+      Corporate Alliance and Stake Holder
+    }
+  }
+
+  package "Business Direction" as DIRECTION {
+    class "Strategic Direction" as STRATEGY {
+      Corporate Strategy
+      Corporate Policies
+      Continuity Planning
+      Enterprise Architecture
+      Products and Services Direction
+    }
+  }
+}
+
+' Row 4 - Single package
+package "Document Management and Archive" as DOCS {
+  class "Document Services" as DOC_SVC {
+    Document Directory
+    Correspondence
+    Archive Services
+    Document Services
+  }
+}
+
+' Layout positioning for square arrangement
+IT -[hidden]right- ENTERPRISE
+ENTERPRISE -[hidden]right- FACILITIES
+COMMAND -[hidden]right- FINANCE
+FINANCE -[hidden]right- HR
+KNOWLEDGE -[hidden]right- CORPORATE_REL
+CORPORATE_REL -[hidden]right- DIRECTION
+
+' Vertical connections
+IT -[hidden]down- COMMAND
+ENTERPRISE -[hidden]down- FINANCE
+FACILITIES -[hidden]down- HR
+COMMAND -[hidden]down- KNOWLEDGE
+FINANCE -[hidden]down- CORPORATE_REL
+HR -[hidden]down- DIRECTION
+KNOWLEDGE -[hidden]down- DOCS
+CORPORATE_REL -[hidden]down- DOCS
+DIRECTION -[hidden]down- DOCS
+
+' === Products, Loans & Cards Domain ===
+' Row 1 - Deposits & Retail Lending
+together {
+  package "Deposits & Accounts" as DEP {
+    class "Deposits & Accounts <color:#0000FF>(Temenos: Deposits module)</color>" as DEP_SVC {
+      <color:#0000FF>Current Account</color>
+      <color:#0000FF>Savings Account</color>
+      <color:#0000FF>Term Deposit</color>
+      Term Deposit Framework Agreement
+      <color:#0000FF>Multicurrency Account</color>
+      <color:#0000FF>Standing Order</color>
+      Virtual Account
+    }
+  }
+
+  package "Retail Lending" as RETAIL_LENDING_PKG {
+    class "Retail Lending <color:#0000FF>(Temenos: Lending module)</color>" as RETAIL_LENDING {
+      <color:#0000FF>Consumer Loan</color>
+      <color:#0000FF>Mortgage Loan</color>
+      <color:#0000FF>Merchandising Loan</color>
+      Leasing
+      Leasing Item Administration
+    }
+  }
+}
+
+' Row 2 - Corporate Banking
+together {
+  package "Corporate Lending" as CORP_LENDING_PKG {
+    class "Corporate Lending" as CORP_LENDING {
+      Corporate Loan
+      Syndicated Loan
+      Project Finance
+      Corporate Lease
+    }
+  }
+
+  package "Corporate Banking" as CORP_BANKING_PKG {
+    class "Corporate Banking" as CORP {
+      Corporate Current Account
+      Cash Management And Account Services
+      Cash Concentration
+      Notional Pooling
+      Corporate Payroll Services
+      Fiduciary Agreement
+    }
+  }
+}
+
+' Row 3 - Risk & Cards
+together {
+  package "Limits & Collateral" as LIMITS_COLLATERAL_PKG {
+    class "Limits & Collateral" as LIMITS_COLLATERAL {
+      Credit Management
+      Collateral Asset Administration
+      Guarantee
+      Exposure Management
+      Credit Line Management
+    }
+  }
+
+  package "Cards" as CARDS {
+    class "Card Services" as CARD_SVC {
+      Credit Card
+      Card Authorization
+      Card Transaction Capture
+      Merchant Relations
+      Merchant Acquiring Facility
+      Card Network Participant Facility
+      Credit Card Position Keeping
+    }
+  }
+}
+
+' Row 4 - Financing & Trade
+together {
+  package "Corporate Financing and Advisory" as CORP_FIN {
+    class "Financing Services" as FIN_SVC {
+      Public Offering
+      Private Placement
+      Mergers and Acquisitions Advisory
+      Corporate Tax Advisory
+      Corporate Finance
+    }
+  }
+
+  package "Trade Banking" as TRADE {
+    class "Trade Finance" as TRADE_FIN {
+      Letter of Credit
+      Bank Guarantee
+      Factoring
+      Documentary Collections
+    }
+  }
+}
+
+' Layout positioning for 2x4 grid
+' Row 1 connections
+DEP -[hidden]right- RETAIL_LENDING_PKG
+
+' Row 2 connections
+CORP_LENDING_PKG -[hidden]right- CORP_BANKING_PKG
+
+' Row 3 connections
+LIMITS_COLLATERAL_PKG -[hidden]right- CARDS
+
+' Row 4 connections
+CORP_FIN -[hidden]right- TRADE
+
+' Vertical connections between rows
+DEP -[hidden]down- CORP_LENDING_PKG
+RETAIL_LENDING_PKG -[hidden]down- CORP_BANKING_PKG
+CORP_LENDING_PKG -[hidden]down- LIMITS_COLLATERAL_PKG
+CORP_BANKING_PKG -[hidden]down- CARDS
+LIMITS_COLLATERAL_PKG -[hidden]down- CORP_FIN
+CARDS -[hidden]down- TRADE
+
+@enduml

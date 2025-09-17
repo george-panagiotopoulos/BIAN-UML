@@ -112,12 +112,81 @@
     z-index: 1000;
 }
 
+/* Font size toggle styles - Size only, preserve colors and weights */
+
+/* Approach 1: Direct SVG text targeting */
+.large-fonts svg text {
+    font-size: 16px !important;
+    /* Preserve original font-weight and colors */
+}
+
+/* Approach 2: All-element targeting (size only) */
+.large-fonts * {
+    font-size: 14px !important;
+    /* Don't change font-weight or colors */
+}
+
+/* Approach 3: Specific PlantUML element targeting */
+.large-fonts svg .class-text,
+.large-fonts svg .class-name {
+    font-size: 16px !important;
+    /* Preserve original styling */
+}
+
+.large-fonts svg .package-name {
+    font-size: 16px !important;
+    /* Preserve original styling */
+}
+
+/* Approach 4: Title-specific targeting */
+.large-fonts svg text[class*="title"] {
+    font-size: 18px !important;
+    /* Preserve original styling */
+}
+
+.large-fonts svg text[class*="class"] {
+    font-size: 16px !important;
+    /* Preserve original styling */
+}
+
+/* Approach 5: Generic text element targeting */
+.large-fonts svg text {
+    font-size: 16px !important;
+    /* Preserve original font-weight and colors */
+}
+
+/* Approach 6: Direct font-size attribute override */
+.large-fonts svg text[font-size] {
+    font-size: 16px !important;
+}
+
+/* Approach 7: Dynamic class for runtime application */
+.large-fonts-applied svg text {
+    font-size: 16px !important;
+    /* Preserve original colors - don't force black */
+}
+
+/* Approach 8: Universal override */
+.large-fonts svg * {
+    font-size: 14px !important;
+    /* Don't change font-weight or colors */
+}
+
+/* Button states for font toggle */
+#fontSizeToggle.active {
+    background-color: rgb(34 197 94) !important;
+}
+
+#fontSizeToggle.active:hover {
+    background-color: rgb(22 163 74) !important;
+}
+
 /* Print styles */
 @media print {
     .no-print {
         display: none !important;
     }
-    
+
     #visualizationArea {
         border: none !important;
         box-shadow: none !important;

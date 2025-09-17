@@ -1,0 +1,85 @@
+@startuml BIAN Cross Product Operations
+
+title BIAN Cross Product Operations Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "Payments" as PAYMENTS {
+    class "Payment Services" as PAY {
+      Payment Order
+      Payment Execution
+      Financial Message Analysis
+      Financial Gateway
+      Central Cash Handling
+      Card Financial Settlement
+      Card eCommerce Gateway
+      Card Clearing
+      ACH Operations
+      Cheque Processing
+      Payment Instruction
+      Correspondent Bank Operations
+      Payment Rail Operations
+      Direct Debit Mandate
+      Direct Debit
+      Cheque Lock Box
+    }
+  }
+
+  package "Account Management" as ACCT_MGMT {
+    class "Account Services" as ACCT {
+      Reward Points Account
+      Product Combination
+      Position Management
+      Position Keeping
+      Fraud Evaluation
+      Fraud Diagnosis
+      Customer Position
+      Counterparty Risk
+      Accounts Receivable
+      Account Reconciliation
+      Securities Position Keeping
+      Transaction Engine
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Operational Services" as OPS_SVC {
+    class "Operations Support" as OPS {
+      Reward Points Awards And Redemption
+      Open Item Management
+      Leasing Item Administration
+      Issued Device Tracking
+      Issued Device Administration
+      Disbursement
+      Delinquent Account Handling
+      Channel Activity History
+      Channel Activity Analysis
+      Card Transaction Switch
+      Card Collections
+      Customer Billing
+      Internal Bank Account
+      Processing Order
+    }
+  }
+
+  package "Collateral Administration" as COLLATERAL {
+    class "Collateral Services" as COL {
+      Collections
+      Collateral Asset Administration
+      Collateral Allocation Management
+      Party Asset Directory
+    }
+  }
+}
+
+' Layout positioning
+PAYMENTS -[hidden]right- ACCT_MGMT
+OPS_SVC -[hidden]right- COLLATERAL
+PAYMENTS -[hidden]down- OPS_SVC
+ACCT_MGMT -[hidden]down- COLLATERAL
+
+@enduml

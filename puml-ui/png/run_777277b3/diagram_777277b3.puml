@@ -1,0 +1,163 @@
+@startuml Combined BIAN Diagrams
+
+title Combined BIAN Architecture Domains
+
+!define LAYOUT top to bottom direction
+
+' === Products, Loans & Cards Domain ===
+' Row 1
+together {
+  package "Product Specific Fulfillment" as PRODUCTS {
+    class "Deposits & Accounts <color:#0000FF>(Temenos: Deposits module)</color>" as DEP {
+      <color:#0000FF>Current Account</color>
+      <color:#0000FF>Savings Account</color>
+      <color:#0000FF>Term Deposit</color>
+      Term Deposit Framework Agreement
+      <color:#0000FF>Multicurrency Account</color>
+      <color:#0000FF>Standing Order</color>
+      Virtual Account
+    }
+
+    class "Retail Lending <color:#0000FF>(Temenos: Lending module)</color>" as RETAIL_LENDING {
+      <color:#0000FF>Consumer Loan</color>
+      <color:#0000FF>Mortgage Loan</color>
+      <color:#0000FF>Merchandising Loan</color>
+      Leasing
+      Leasing Item Administration
+    }
+
+    class "Corporate Lending" as CORP_LENDING {
+      Corporate Loan
+      Syndicated Loan
+      Project Finance
+      Corporate Lease
+    }
+
+    class "Corporate Banking" as CORP {
+      Corporate Current Account
+      Cash Management And Account Services
+      Direct Debit Mandate
+      Direct Debit
+      Cheque Lock Box
+      Cash Concentration
+      Notional Pooling
+      Corporate Payroll Services
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Cards" as CARDS {
+    class "Card Services" as CARD_SVC {
+      Credit Card
+      Card Authorization
+      Card Transaction Capture
+      Merchant Relations
+      Merchant Acquiring Facility
+      Card Network Participant Facility
+      Credit Card Position Keeping
+    }
+  }
+
+  package "Corporate Financing and Advisory" as CORP_FIN {
+    class "Financing Services" as FIN_SVC {
+      Public Offering
+      Private Placement
+      Mergers and Acquisitions Advisory
+      Corporate Tax Advisory
+      Corporate Finance
+    }
+  }
+
+  package "Trade Banking" as TRADE {
+    class "Trade Finance" as TRADE_FIN {
+      Letter of Credit
+      Bank Guarantee
+      Credit Management
+      Factoring
+      Documentary Collections
+    }
+  }
+}
+
+' Layout positioning
+CARDS -[hidden]right- CORP_FIN
+CORP_FIN -[hidden]right- TRADE
+PRODUCTS -[hidden]down- CARDS
+PRODUCTS -[hidden]down- CORP_FIN
+PRODUCTS -[hidden]down- TRADE
+
+' Additional positioning for new lending sections
+RETAIL_LENDING -[hidden]right- CORP_LENDING
+
+' === Risk & Compliance Domain ===
+' Row 1
+together {
+  package "Bank Portfolio and Treasury" as PORTFOLIO {
+    class "Treasury Services" as TREASURY {
+      Stock Lending and Repos
+      Corporate Treasury Analysis
+      Corporate Treasury
+      Bank Portfolio Analysis
+      Bank Portfolio Administration
+      Asset Securitization
+      Asset And Liability Management
+    }
+  }
+
+  package "Business Analysis" as ANALYSIS {
+    class "Analytics Services" as ANALYTICS {
+      Market Analysis
+      Contribution Analysis
+      Competitor Analysis
+      Channel Portfolio
+      Branch Portfolio
+      Segment Direction
+      Customer Portfolio
+      Product Portfolio
+      Market Research
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Regulations and Compliance" as REGULATORY {
+    class "Regulatory Services" as REG {
+      Regulatory Reporting
+      Regulatory Compliance
+      Guideline Compliance
+      Fraud Resolution
+      Financial Accounting
+      Compliance Reporting
+      Financial Statement Assessment
+    }
+  }
+
+  package "Models" as MODELS {
+    class "Risk Models" as RISK_MODELS {
+      Contribution Models
+      Operational Risk Models
+      Production Risk Models
+      Business Risk Models
+      Credit and Margin Management
+      Economic Capital
+      Credit Risk Models
+      Financial Instrument Valuation Models
+      Market Risk Models
+      Liquidity Risk Models
+      Gap Analysis
+      Fraud Model
+      Customer Behavior Models
+    }
+  }
+}
+
+' Layout positioning
+PORTFOLIO -[hidden]right- ANALYSIS
+REGULATORY -[hidden]right- MODELS
+PORTFOLIO -[hidden]down- REGULATORY
+ANALYSIS -[hidden]down- MODELS
+
+@enduml
