@@ -24,6 +24,7 @@ together {
     class "Party Management <color:#0000FF>(Temenos: Party module)</color>" as PARTY {
       <color:#0000FF>Party Reference Data Directory</color>
     }
+    note right of PARTY : <color:#FF0000>MVP PI3/PI4</color>
   }
 }
 

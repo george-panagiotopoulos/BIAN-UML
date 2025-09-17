@@ -28,6 +28,7 @@ together {
       Leasing
       Leasing Item Administration
     }
+    note right of RETAIL_LENDING : <color:#FF0000>Pilot PI2, MVP PI3</color>
   }
 }
 
