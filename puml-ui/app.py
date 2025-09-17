@@ -12,6 +12,7 @@ import tempfile
 import uuid
 from pathlib import Path
 from typing import Union
+import re
 
 app = Flask(__name__)
 
@@ -150,6 +151,27 @@ def generate_diagram():
     except Exception as e:
         return jsonify({'error': f'Error generating diagram: {str(e)}'}), 500
 
+def enforce_svg_white_background(svg_text: str) -> str:
+    """Ensure the returned SVG has a white background regardless of theme."""
+    if not svg_text:
+        return svg_text
+
+    updated = svg_text
+
+    # 1) Ensure the root svg tag has a white background style
+    if '<svg' in updated and 'background' not in updated.split('>')[0]:
+        updated = updated.replace('<svg', '<svg style="background:#FFFFFF"', 1)
+
+    # 2) Insert a white rect covering the viewBox/canvas right after the <svg ...>
+    has_rect = re.search(r'<rect[^>]+fill\s*=\s*"#?fff', updated, flags=re.IGNORECASE) is not None
+    if not has_rect:
+        # Try to extract explicit width/height from svg or viewBox
+        m_vb = re.search(r'viewBox\s*=\s*"([^"]+)"', updated)
+        rect_tag = '<rect x="0" y="0" width="100%" height="100%" fill="#FFFFFF"/>'
+        updated = re.sub(r'(<svg[^>]*>)', r"\1" + rect_tag, updated, count=1)
+
+    return updated
+
 def enhance_uml_for_large_fonts(uml_content):
     """Enhance UML content with larger font specifications for better readability"""
     try:
@@ -161,8 +183,9 @@ def enhance_uml_for_large_fonts(uml_content):
         for line in lines:
             if line.strip().startswith('@startuml'):
                 enhanced_lines.append(line)
-                # Use PlantUML's native scale directive for clean enlargement
+                # Use PlantUML's native scale + force white background
                 enhanced_lines.append('')
+                enhanced_lines.append('skinparam BackgroundColor white')
                 enhanced_lines.append('scale 1.5')
                 enhanced_lines.append('')
                 print("✅ Added PlantUML scale directive for 1.5x enlargement")
@@ -171,7 +194,7 @@ def enhance_uml_for_large_fonts(uml_content):
                 line_stripped = line.strip()
                 if (line_stripped.startswith('!define LAYOUT') or 
                     line_stripped.startswith('!theme') or
-                    line_stripped.startswith('skinparam')):
+                    line_stripped.startswith('skinparam BackgroundColor')):
                     print(f"🚫 Skipping existing styling command: {line_stripped}")
                     continue
                 enhanced_lines.append(line)
@@ -532,6 +555,11 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
             if content and is_error_svg(content):
                 print("⚠️ Detected PlantUML error SVG. Using text-based fallback.")
                 return generate_text_fallback_diagram(uml_content)
+            # Enforce white background for SVG content
+            try:
+                content = enforce_svg_white_background(content)
+            except Exception as e:
+                print(f"⚠️ Failed to enforce white background on SVG: {e}")
         else:
             with open(output_file, 'rb') as f:
                 content = f.read()
