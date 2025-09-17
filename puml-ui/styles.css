@@ -112,39 +112,11 @@
     z-index: 1000;
 }
 
-/* Font size toggle styles - PNG-based scaling approach */
+/* Font size toggle styles - PlantUML native font sizing approach */
 
-/* Large fonts container - uses CSS transform for reliable scaling */
-.large-fonts .diagram-image {
-    transform: scale(1.5) !important;
-    transform-origin: top left !important;
-    image-rendering: -webkit-optimize-contrast !important;
-    image-rendering: crisp-edges !important;
-}
-
-/* Adjust container height when scaled */
-.large-fonts .diagram-container {
-    height: auto !important;
-    min-height: calc(80vh * 1.5) !important;
-}
-
-/* Alternative approach: CSS zoom for better compatibility */
-.large-fonts .diagram-zoom {
-    zoom: 1.5 !important;
-    -moz-transform: scale(1.5) !important;
-    -moz-transform-origin: 0 0 !important;
-}
-
-/* Fallback for older browsers */
-.large-fonts img {
-    width: 150% !important;
-    height: auto !important;
-}
-
-/* Ensure proper container sizing */
-.large-fonts .max-w-full {
-    max-width: 150% !important;
-    width: 150% !important;
+/* Large fonts use PlantUML's built-in skinparam for clean rendering */
+.large-fonts {
+    /* No CSS scaling needed - PlantUML handles font sizes natively */
 }
 
 /* Button states for font toggle */

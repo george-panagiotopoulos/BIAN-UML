@@ -359,7 +359,7 @@ class BianUMLVisualizer {
                 z-index: 9999;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             `;
-            indicator.innerHTML = '🔍 Large Fonts Applied!<br><small>Using CSS scaling</small>';
+            indicator.innerHTML = '🔍 Large Fonts Applied!<br><small>Using PlantUML skinparam</small>';
             document.body.appendChild(indicator);
 
             // Remove indicator after 3 seconds
@@ -369,7 +369,7 @@ class BianUMLVisualizer {
                 }
             }, 3000);
 
-            console.log('Applied large fonts styling - using CSS scaling');
+            console.log('Applied large fonts styling - using PlantUML skinparam');
         } else {
             toggleButton.classList.remove('active');
             toggleButton.style.backgroundColor = ''; // Reset to default
@@ -385,17 +385,16 @@ class BianUMLVisualizer {
             console.log('Removed large fonts styling');
         }
 
-        // Apply scaling to any currently displayed images
-        const currentImages = visualizationArea.querySelectorAll('img');
-        currentImages.forEach(img => {
-            if (this.largeFontsEnabled) {
-                img.classList.add('diagram-image', 'diagram-zoom');
-                console.log('Applied scaling to existing image');
-            } else {
-                img.classList.remove('diagram-image', 'diagram-zoom');
-                console.log('Removed scaling from existing image');
-            }
-        });
+        // Regenerate current diagram with new font settings if one is displayed
+        const hasExistingDiagram = visualizationArea.querySelector('img') || 
+                                   !visualizationArea.innerHTML.includes('Select diagrams');
+
+        if (hasExistingDiagram && this.selectedDiagrams.size > 0) {
+            console.log('Regenerating current diagram with new font settings...');
+            setTimeout(() => {
+                this.visualizeSelectedDiagrams();
+            }, 100);
+        }
 
         console.log(`Font size ${this.largeFontsEnabled ? 'enabled' : 'disabled'}`);
     }
@@ -682,7 +681,6 @@ class BianUMLVisualizer {
             `;
             
             // Always use PNG format for reliable rendering across environments
-            // Apply CSS scaling for large fonts instead of SVG manipulation
             const format = 'png';
 
             const response = await fetch('/api/generate-diagram', {
@@ -692,7 +690,8 @@ class BianUMLVisualizer {
                 },
                 body: JSON.stringify({
                     uml_content: umlContent,
-                    format: format
+                    format: format,
+                    large_fonts: this.largeFontsEnabled
                 })
             });
             
@@ -712,7 +711,7 @@ class BianUMLVisualizer {
                 const imageUrl = URL.createObjectURL(blob);
                 diagramContent = imageUrl;
                 isImage = true;
-                console.log('Generated PNG image with CSS scaling for large fonts');
+                console.log(`Generated PNG image ${this.largeFontsEnabled ? 'with large fonts' : 'with normal fonts'}`);
             } else {
                 // Fallback: Handle text content (shouldn't happen with PNG format)
                 diagramContent = await response.text();
@@ -724,33 +723,19 @@ class BianUMLVisualizer {
             const diagramContainer = document.createElement('div');
             diagramContainer.className = 'w-full flex flex-col items-center';
             
-            // Create content wrapper with proper classes for scaling
-            let wrapperClasses = 'max-w-full overflow-auto border rounded-lg bg-white p-4 shadow-sm';
-            let wrapperStyles = 'max-height: 80vh;';
-
-            if (this.largeFontsEnabled) {
-                wrapperClasses += ' diagram-container';
-                wrapperStyles += ' min-height: calc(80vh * 1.5);';
-            }
-
+            // Create content wrapper - no CSS scaling needed, PlantUML handles font sizes
             const contentWrapper = document.createElement('div');
-            contentWrapper.className = wrapperClasses;
-            contentWrapper.style.cssText = wrapperStyles;
+            contentWrapper.className = 'max-w-full overflow-auto border rounded-lg bg-white p-4 shadow-sm';
+            contentWrapper.style.maxHeight = '80vh';
 
             if (isImage) {
-                // Display as image with scaling classes
+                // Display as image - no CSS scaling, PlantUML generates appropriate size
                 const img = document.createElement('img');
                 img.src = diagramContent;
-                img.className = 'max-w-full h-auto diagram-image';
-                img.style.maxHeight = this.largeFontsEnabled ? 'calc(75vh * 1.5)' : '75vh';
-
-                // Add additional scaling class if large fonts enabled
-                if (this.largeFontsEnabled) {
-                    img.classList.add('diagram-zoom');
-                    console.log('Applied large font scaling to image');
-                }
-
+                img.className = 'max-w-full h-auto';
+                img.style.maxHeight = '75vh';
                 contentWrapper.appendChild(img);
+                console.log('Displayed PNG image with native PlantUML font sizing');
             } else {
                 // Fallback: Display as SVG (shouldn't happen with PNG format)
                 contentWrapper.innerHTML = diagramContent;

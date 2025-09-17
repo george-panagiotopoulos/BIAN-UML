@@ -102,6 +102,11 @@ def generate_diagram():
         
         uml_content = data['uml_content']
         output_format = data.get('format', 'svg')  # svg, png, etc.
+        large_fonts = data.get('large_fonts', False)  # Flag for large fonts
+        
+        # If large fonts requested, modify UML content for bigger font sizes
+        if large_fonts and output_format == 'png':
+            uml_content = enhance_uml_for_large_fonts(uml_content)
         
         # Validate PlantUML jar exists
         if not PLANTUML_JAR.exists():
@@ -136,6 +141,43 @@ def generate_diagram():
             
     except Exception as e:
         return jsonify({'error': f'Error generating diagram: {str(e)}'}), 500
+
+def enhance_uml_for_large_fonts(uml_content):
+    """Enhance UML content with larger font specifications for better readability"""
+    try:
+        lines = uml_content.split('\n')
+        enhanced_lines = []
+        
+        # Add font size configuration at the beginning
+        for line in lines:
+            if line.strip().startswith('@startuml'):
+                enhanced_lines.append(line)
+                # Add skinparam for larger fonts
+                enhanced_lines.append('')
+                enhanced_lines.append('!theme plain')
+                enhanced_lines.append('skinparam defaultFontSize 14')
+                enhanced_lines.append('skinparam classFontSize 16')
+                enhanced_lines.append('skinparam packageFontSize 18')
+                enhanced_lines.append('skinparam titleFontSize 20')
+                enhanced_lines.append('skinparam stereotypeFontSize 12')
+                enhanced_lines.append('skinparam noteFontSize 12')
+                enhanced_lines.append('skinparam legendFontSize 12')
+                enhanced_lines.append('skinparam footerFontSize 10')
+                enhanced_lines.append('skinparam headerFontSize 10')
+                enhanced_lines.append('skinparam minClassWidth 120')
+                enhanced_lines.append('skinparam packageStyle rectangle')
+                enhanced_lines.append('skinparam backgroundColor white')
+                enhanced_lines.append('skinparam classBackgroundColor white')
+                enhanced_lines.append('skinparam packageBackgroundColor white')
+                enhanced_lines.append('')
+            else:
+                enhanced_lines.append(line)
+        
+        return '\n'.join(enhanced_lines)
+        
+    except Exception as e:
+        print(f"Error enhancing UML for large fonts: {e}")
+        return uml_content  # Return original if enhancement fails
 
 def convert_svg_to_png(svg_content):
     """Convert SVG content to PNG using Python libraries as fallback"""
