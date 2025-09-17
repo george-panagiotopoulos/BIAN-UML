@@ -432,7 +432,7 @@ class BianUMLVisualizer {
                 console.log('Applying large fonts to SVG');
 
                 // Method 1: Direct style manipulation
-                svgElement.style.fontSize = '16px';
+                svgElement.style.fontSize = '18px';
                 // Remove font-weight to avoid bold text
 
                 // Method 2: Apply to all text elements
@@ -445,9 +445,9 @@ class BianUMLVisualizer {
                     console.log(`Text element ${index}: original size "${originalSize}", fill "${originalFill}"`);
 
                     // Try multiple approaches - only change font-size, preserve colors and weights
-                    text.setAttribute('font-size', '16px');
+                    text.setAttribute('font-size', '18px');
                     // Don't change font-weight to avoid bold text
-                    text.style.fontSize = '16px';
+                    text.style.fontSize = '18px';
 
                     // CRITICAL: Preserve original colors, especially blue
                     if (originalFill && (originalFill.includes('#0000FF') || originalFill.includes('#0000ff') || originalFill.includes('blue'))) {
@@ -456,7 +456,7 @@ class BianUMLVisualizer {
                         console.log(`Preserved blue color for text element ${index}`);
                     }
 
-                    console.log(`Updated text element ${index} to 16px (preserved original styling)`);
+                    console.log(`Updated text element ${index} to 18px (preserved original styling)`);
                 });
 
                 // Method 3: Add CSS class to parent
@@ -467,10 +467,10 @@ class BianUMLVisualizer {
                 const styleElement = document.createElement('style');
                 styleElement.textContent = `
                     #${svgElement.id || 'visualizationArea'} svg text {
-                        font-size: 16px !important;
+                        font-size: 18px !important;
                     }
                     .large-fonts svg text {
-                        font-size: 16px !important;
+                        font-size: 18px !important;
                     }
                     /* CRITICAL: Preserve blue colors */
                     .large-fonts svg text[fill="#0000FF"],
@@ -500,8 +500,8 @@ class BianUMLVisualizer {
                     let modifiedContent = svgContent;
 
                     // Replace font-size attributes only, preserve colors and weights
-                    modifiedContent = modifiedContent.replace(/font-size="[^"]*"/g, 'font-size="16px"');
-                    modifiedContent = modifiedContent.replace(/font-size='[^']*'/g, "font-size='16px'");
+                    modifiedContent = modifiedContent.replace(/font-size="[^"]*"/g, 'font-size="18px"');
+                    modifiedContent = modifiedContent.replace(/font-size='[^']*'/g, "font-size='18px'");
 
                     // CRITICAL: Ensure blue colors are preserved in the modified content
                     modifiedContent = modifiedContent.replace(/fill="[^"]*"/g, (match) => {
@@ -681,7 +681,7 @@ class BianUMLVisualizer {
             `;
             
             // Always use PNG format for reliable rendering across environments
-            const format = 'png';
+            const format = this.largeFontsEnabled ? 'svg' : 'png';
 
             const requestData = {
                 uml_content: umlContent,
@@ -714,41 +714,45 @@ class BianUMLVisualizer {
             let diagramContent;
             let isImage = false;
 
-            if (contentType && contentType.includes('image/')) {
-                // Handle binary image data (PNG, etc.) - always PNG for reliable rendering
+            if (!this.largeFontsEnabled && contentType && contentType.includes('image/')) {
+                // Normal mode: PNG
                 const blob = await response.blob();
                 const imageUrl = URL.createObjectURL(blob);
                 diagramContent = imageUrl;
                 isImage = true;
-                console.log(`Generated PNG image ${this.largeFontsEnabled ? 'with large fonts' : 'with normal fonts'}`);
+                console.log('Generated PNG image with normal fonts');
             } else {
-                // Fallback: Handle text content (shouldn't happen with PNG format)
+                // Large-font mode: SVG as text
                 diagramContent = await response.text();
                 isImage = false;
-                console.log('Unexpected text content received, treating as fallback');
+                console.log('Generated SVG for large-font manipulation');
             }
             
             // Create container for the diagram
             const diagramContainer = document.createElement('div');
             diagramContainer.className = 'w-full flex flex-col items-center';
             
-            // Create content wrapper - no CSS scaling needed, PlantUML handles font sizes
+            // Create content wrapper - SVG in large-font mode, PNG otherwise
             const contentWrapper = document.createElement('div');
             contentWrapper.className = 'max-w-full overflow-auto border rounded-lg bg-white p-4 shadow-sm';
-            contentWrapper.style.maxHeight = '80vh';
+            contentWrapper.style.maxHeight = this.largeFontsEnabled ? '95vh' : '80vh';
 
             if (isImage) {
-                // Display as image - no CSS scaling, PlantUML generates appropriate size
+                // Display as image
                 const img = document.createElement('img');
                 img.src = diagramContent;
                 img.className = 'max-w-full h-auto';
                 img.style.maxHeight = '75vh';
                 contentWrapper.appendChild(img);
-                console.log('Displayed PNG image with native PlantUML font sizing');
+                console.log('Displayed PNG image');
             } else {
-                // Fallback: Display as SVG (shouldn't happen with PNG format)
+                // Display as SVG
                 contentWrapper.innerHTML = diagramContent;
-                console.log('Fallback: Displaying text content as HTML');
+                console.log('Displayed SVG content');
+                if (this.largeFontsEnabled) {
+                    // Apply font size updates directly to SVG text elements
+                    setTimeout(() => this.applyFontSizeToCurrentSVG(), 50);
+                }
             }
             
             // Create download buttons
