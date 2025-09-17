@@ -98,6 +98,8 @@ puml-ui/
 - **Local PlantUML Processing**: Uses local plantuml.jar for diagram generation
 - **GraphViz Auto-Detection**: Automatically detects Homebrew, system, and PATH GraphViz installations
 - **Multiple Output Formats**: Supports SVG and PNG diagram export with proper visualization
+- **PNG Fallback Conversion**: Automatic SVG-to-PNG conversion when PlantUML PNG fails
+- **Robust Error Recovery**: Multiple fallback strategies for maximum compatibility
 - **API Endpoints**: RESTful endpoints for diagram access and generation
 - **Auto Port Cleanup**: Automatically kills existing processes on port 7777
 - **Health Monitoring**: Built-in health check with Java, PlantUML, and GraphViz status

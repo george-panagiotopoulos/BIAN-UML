@@ -136,6 +136,74 @@ def generate_diagram():
     except Exception as e:
         return jsonify({'error': f'Error generating diagram: {str(e)}'}), 500
 
+def convert_svg_to_png(svg_content):
+    """Convert SVG content to PNG using Python libraries as fallback"""
+    try:
+        # Try using cairosvg if available
+        try:
+            import cairosvg
+            png_data = cairosvg.svg2png(bytestring=svg_content.encode('utf-8'))
+            return {
+                'success': True,
+                'content': png_data,
+                'method': 'cairosvg'
+            }
+        except ImportError:
+            pass
+        
+        # Try using wand (ImageMagick) if available
+        try:
+            from wand.image import Image
+            from wand.color import Color
+            
+            with Image() as img:
+                img.format = 'svg'
+                img.read(blob=svg_content.encode('utf-8'))
+                img.format = 'png'
+                img.background_color = Color('white')
+                png_data = img.make_blob()
+                return {
+                    'success': True,
+                    'content': png_data,
+                    'method': 'wand'
+                }
+        except ImportError:
+            pass
+        
+        # Try using Pillow with svg2rlg if available
+        try:
+            from reportlab.graphics import renderPM
+            from svglib.svglib import renderSVG
+            import io
+            
+            # Convert SVG to ReportLab drawing
+            svg_file = io.StringIO(svg_content)
+            drawing = renderSVG.renderSVG(svg_file)
+            
+            # Render to PNG
+            png_data = renderPM.drawToPIL(drawing, fmt='PNG')
+            img_buffer = io.BytesIO()
+            png_data.save(img_buffer, format='PNG')
+            
+            return {
+                'success': True,
+                'content': img_buffer.getvalue(),
+                'method': 'reportlab'
+            }
+        except ImportError:
+            pass
+        
+        return {
+            'success': False,
+            'error': 'No SVG to PNG conversion libraries available. Install cairosvg, wand, or reportlab+svglib.'
+        }
+        
+    except Exception as e:
+        return {
+            'success': False,
+            'error': f'SVG to PNG conversion failed: {str(e)}'
+        }
+
 def generate_plantuml_diagram(uml_content, output_format='svg'):
     """Generate diagram using local PlantUML jar with local output directory"""
     try:
@@ -230,7 +298,25 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
         if not result or result.returncode != 0:
             error_msg = result.stderr if result else "All execution attempts failed"
             
-            # Try one more fallback: text output
+            # For PNG, try generating SVG first then converting
+            if output_format == 'png':
+                print("🔄 PNG failed, trying SVG generation then conversion...")
+                svg_result = generate_plantuml_diagram(uml_content, 'svg')
+                if svg_result['success']:
+                    print("✅ SVG generated, converting to PNG...")
+                    png_result = convert_svg_to_png(svg_result['content'])
+                    if png_result['success']:
+                        print(f"✅ PNG conversion successful using {png_result['method']}")
+                        return {
+                            'success': True,
+                            'content': png_result['content'],
+                            'format': 'png',
+                            'method': f"SVG->PNG via {png_result['method']}"
+                        }
+                    else:
+                        print(f"❌ PNG conversion failed: {png_result['error']}")
+            
+            # Try text-based fallback for SVG
             if output_format == 'svg':
                 print("🔄 Trying text-based fallback...")
                 return generate_text_fallback_diagram(uml_content)
@@ -285,6 +371,31 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
                 content = f.read()
         
         print(f"📄 Successfully read {len(content)} bytes from {output_file}")
+        
+        # Check if PNG is corrupted (very small file size indicates error)
+        if output_format == 'png' and len(content) < 1000:  # Less than 1KB is likely corrupted
+            print(f"⚠️ PNG file seems corrupted ({len(content)} bytes), trying SVG->PNG conversion...")
+            svg_result = generate_plantuml_diagram(uml_content, 'svg')
+            if svg_result['success']:
+                print("✅ SVG generated, converting to PNG...")
+                png_result = convert_svg_to_png(svg_result['content'])
+                if png_result['success']:
+                    print(f"✅ PNG conversion successful using {png_result['method']}")
+                    # Clean up corrupted file
+                    try:
+                        output_file.unlink()
+                        print(f"🗑️ Removed corrupted PNG: {output_file}")
+                    except:
+                        pass
+                    
+                    return {
+                        'success': True,
+                        'content': png_result['content'],
+                        'format': 'png',
+                        'method': f"SVG->PNG via {png_result['method']} (fallback)"
+                    }
+                else:
+                    print(f"❌ PNG conversion failed: {png_result['error']}")
         
         # Clean up input file (but keep output for debugging)
         try:
