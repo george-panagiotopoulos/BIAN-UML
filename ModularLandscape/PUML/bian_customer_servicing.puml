@@ -21,8 +21,8 @@ together {
       Customer Product and Service Directory
     }
 
-    class "Party Management" as PARTY {
-      Party Reference Data Directory
+    class "Party Management <color:#0000FF>(Temenos: Party module)</color>" as PARTY {
+      <color:#0000FF>Party Reference Data Directory</color>
     }
   }
 }
@@ -38,8 +38,6 @@ together {
       Card Case
       Servicing Order
       Servicing Mandate
-      Payment Initiation
-      Loan Syndication
     }
   }
 

@@ -445,13 +445,20 @@ class BianUMLVisualizer {
 
                 textElements.forEach((text, index) => {
                     const originalSize = text.getAttribute('font-size') || text.style.fontSize;
-                    console.log(`Text element ${index}: original size "${originalSize}"`);
+                    const originalFill = text.getAttribute('fill') || text.style.fill;
+                    console.log(`Text element ${index}: original size "${originalSize}", fill "${originalFill}"`);
 
                     // Try multiple approaches - only change font-size, preserve colors and weights
                     text.setAttribute('font-size', '16px');
                     // Don't change font-weight to avoid bold text
                     text.style.fontSize = '16px';
-                    // Preserve original font-weight and colors
+
+                    // CRITICAL: Preserve original colors, especially blue
+                    if (originalFill && (originalFill.includes('#0000FF') || originalFill.includes('#0000ff') || originalFill.includes('blue'))) {
+                        text.setAttribute('fill', '#0000FF');
+                        text.style.fill = '#0000FF';
+                        console.log(`Preserved blue color for text element ${index}`);
+                    }
 
                     console.log(`Updated text element ${index} to 16px (preserved original styling)`);
                 });
@@ -469,14 +476,27 @@ class BianUMLVisualizer {
                     .large-fonts svg text {
                         font-size: 16px !important;
                     }
-                    /* Preserve original colors and weights */
+                    /* CRITICAL: Preserve blue colors */
                     .large-fonts svg text[fill="#0000FF"],
-                    .large-fonts svg text[fill="blue"] {
+                    .large-fonts svg text[fill="#0000ff"],
+                    .large-fonts svg text[fill="blue"],
+                    .large-fonts svg text[fill="Blue"] {
                         fill: #0000FF !important;
+                    }
+                    /* Ensure all blue text remains blue */
+                    svg text[fill="#0000FF"],
+                    svg text[fill="#0000ff"],
+                    svg text[fill="blue"],
+                    svg text[fill="Blue"] {
+                        fill: #0000FF !important;
+                    }
+                    /* Preserve original colors and weights for all other elements */
+                    .large-fonts svg text {
+                        fill: inherit !important;
                     }
                 `;
                 document.head.appendChild(styleElement);
-                console.log('Injected CSS style (size only, preserved styling)');
+                console.log('Injected CSS style (size only, blue colors preserved)');
 
                 // Method 5: Direct SVG content manipulation as last resort
                 try {
@@ -487,17 +507,25 @@ class BianUMLVisualizer {
                     modifiedContent = modifiedContent.replace(/font-size="[^"]*"/g, 'font-size="16px"');
                     modifiedContent = modifiedContent.replace(/font-size='[^']*'/g, "font-size='16px'");
 
+                    // CRITICAL: Ensure blue colors are preserved in the modified content
+                    modifiedContent = modifiedContent.replace(/fill="[^"]*"/g, (match) => {
+                        if (match.includes('#0000FF') || match.includes('#0000ff') || match.includes('blue')) {
+                            return 'fill="#0000FF"';
+                        }
+                        return match;
+                    });
+
                     // Don't add font-weight to avoid bold text
 
                     if (modifiedContent !== svgContent) {
-                        console.log('Direct SVG content modification applied (size only)');
+                        console.log('Direct SVG content modification applied (size only, colors preserved)');
                         // Replace the SVG element with modified version
                         const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = modifiedContent;
                         const newSvg = tempDiv.querySelector('svg');
                         if (newSvg) {
                             svgElement.parentNode.replaceChild(newSvg, svgElement);
-                            console.log('SVG element replaced with modified version');
+                            console.log('SVG element replaced with modified version (blue colors preserved)');
                         }
                     }
                 } catch (error) {
@@ -887,10 +915,18 @@ class BianUMLVisualizer {
         modifiedContent = modifiedContent.replace(/font-size="[^"]*"/g, 'font-size="16px"');
         modifiedContent = modifiedContent.replace(/font-size='[^']*'/g, "font-size='16px'");
 
+        // CRITICAL: Ensure blue colors are preserved in downloaded SVG
+        modifiedContent = modifiedContent.replace(/fill="[^"]*"/g, (match) => {
+            if (match.includes('#0000FF') || match.includes('#0000ff') || match.includes('blue')) {
+                return 'fill="#0000FF"';
+            }
+            return match;
+        });
+
         // Don't add font-weight to avoid bold text
         // Preserve original blue colors and other styling
 
-        console.log('Applied large fonts to SVG content for download (size only, preserved styling)');
+        console.log('Applied large fonts to SVG content for download (size only, blue colors preserved)');
         return modifiedContent;
     }
 

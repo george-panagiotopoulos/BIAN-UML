@@ -192,3 +192,23 @@
         box-shadow: none !important;
     }
 }
+
+/* Critical: Preserve blue colors in SVG elements */
+.large-fonts svg text[fill="#0000FF"],
+.large-fonts svg text[fill="blue"],
+.large-fonts svg text[fill="#0000ff"] {
+    fill: #0000FF !important;
+}
+
+/* Ensure blue colors are preserved in all contexts */
+svg text[fill="#0000FF"],
+svg text[fill="blue"],
+svg text[fill="#0000ff"] {
+    fill: #0000FF !important;
+}
+
+/* Additional blue color preservation */
+.large-fonts svg * {
+    /* Only change font-size, preserve all other properties */
+    fill: inherit !important;
+}

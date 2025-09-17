@@ -129,6 +129,7 @@ package "Document Management and Archive" as DOCS {
     Correspondence
     Archive Services
     Document Services
+    Workflow Management
   }
 }
 

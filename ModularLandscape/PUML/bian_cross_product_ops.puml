@@ -21,6 +21,10 @@ together {
       Payment Instruction
       Correspondent Bank Operations
       Payment Rail Operations
+      Direct Debit Mandate
+      Direct Debit
+      Cheque Lock Box
+      Payment Initiation
     }
   }
 
@@ -51,14 +55,13 @@ together {
       Leasing Item Administration
       Issued Device Tracking
       Issued Device Administration
-      Disbursement
+      <color:#0000FF>Disbursement (Temenos: Lending Module)</color>
       Delinquent Account Handling
       Channel Activity History
       Channel Activity Analysis
       Card Transaction Switch
       Card Collections
       Customer Billing
-      Internal Bank Account
       Processing Order
     }
   }

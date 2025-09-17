@@ -50,14 +50,14 @@ together {
   }
 
   package "Product Management" as PRODUCT_MGMT {
-    class "Product Services" as PROD {
-      Product Design
-      Product Deployment
+    class "Product Services <color:#0000FF>(Temenos: Product Catalogue module and Pricing module)</color>" as PROD {
+      <color:#0000FF>Product Design (Product Catalogue)</color>
+      <color:#0000FF>Product Deployment (Product Catalogue)</color>
       Product Training
       Product Quality Assurance
-      Discount Pricing
-      Product Directory
-      Special Pricing Conditions
+      <color:#0000FF>Discount Pricing (Pricing)</color>
+      <color:#0000FF>Product Directory (Product Catalogue)</color>
+      <color:#0000FF>Special Pricing Conditions (Pricing)</color>
     }
   }
 }
