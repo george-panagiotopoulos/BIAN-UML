@@ -110,13 +110,24 @@ def generate_diagram():
         result = generate_plantuml_diagram(uml_content, output_format)
         
         if result['success']:
+            # Determine proper MIME type
+            if output_format == 'svg':
+                mimetype = 'image/svg+xml'
+            elif output_format == 'png':
+                mimetype = 'image/png'
+            elif output_format == 'jpg' or output_format == 'jpeg':
+                mimetype = 'image/jpeg'
+            else:
+                mimetype = f'image/{output_format}'
+            
             # Return the generated image
             return Response(
                 result['content'],
-                mimetype=f'image/{output_format}' if output_format != 'svg' else 'image/svg+xml',
+                mimetype=mimetype,
                 headers={
                     'Content-Disposition': f'inline; filename="diagram.{output_format}"',
-                    'Cache-Control': 'no-cache'
+                    'Cache-Control': 'no-cache',
+                    'Access-Control-Allow-Origin': '*'
                 }
             )
         else:
@@ -150,19 +161,36 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
             '-o', str(OUTPUT_DIR), # Output directory
         ]
         
-        # For complex diagrams, try without GraphViz first
-        cmd_no_graphviz = base_cmd + [
-            '-DGRAPHVIZ_DOT=""',   # Disable GraphViz
+        # Try different GraphViz configurations
+        # 1. Try with Homebrew GraphViz path
+        homebrew_dot_path = '/opt/homebrew/bin/dot'
+        cmd_homebrew_graphviz = base_cmd + [
+            f'-DGRAPHVIZ_DOT={homebrew_dot_path}',
             str(input_file)
         ]
         
-        # Standard command with GraphViz
-        cmd_with_graphviz = base_cmd + [str(input_file)]
+        # 2. Try with system GraphViz
+        system_dot_path = '/usr/local/bin/dot'
+        cmd_system_graphviz = base_cmd + [
+            f'-DGRAPHVIZ_DOT={system_dot_path}',
+            str(input_file)
+        ]
         
-        # Try multiple execution strategies
+        # 3. Try with default GraphViz (auto-detect)
+        cmd_auto_graphviz = base_cmd + [str(input_file)]
+        
+        # 4. Try without GraphViz (fallback)
+        cmd_no_graphviz = base_cmd + [
+            '-DGRAPHVIZ_DOT=""',
+            str(input_file)
+        ]
+        
+        # Try multiple execution strategies in order of preference
         execution_attempts = [
+            ("with Homebrew GraphViz", cmd_homebrew_graphviz),
+            ("with System GraphViz", cmd_system_graphviz), 
+            ("with Auto-detect GraphViz", cmd_auto_graphviz),
             ("without GraphViz", cmd_no_graphviz),
-            ("with GraphViz", cmd_with_graphviz),
         ]
         
         result = None
@@ -286,12 +314,15 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
 @app.route('/health')
 def health_check():
     """Health check endpoint"""
+    graphviz_installations = check_graphviz_installations()
     return jsonify({
         'status': 'healthy',
         'puml_dir_exists': PUML_DIR.exists(),
         'puml_files_count': len(list(PUML_DIR.glob("*.puml"))) if PUML_DIR.exists() else 0,
         'plantuml_jar_exists': PLANTUML_JAR.exists(),
-        'java_available': check_java_availability()
+        'java_available': check_java_availability(),
+        'graphviz_installations': graphviz_installations,
+        'graphviz_available': len(graphviz_installations) > 0
     })
 
 def generate_text_fallback_diagram(uml_content):
@@ -371,6 +402,48 @@ def generate_text_fallback_diagram(uml_content):
             'success': False,
             'error': f'Even text fallback failed: {str(e)}'
         }
+
+def check_graphviz_installations():
+    """Check available GraphViz installations"""
+    installations = []
+    
+    # Check common GraphViz installation paths
+    paths_to_check = [
+        '/opt/homebrew/bin/dot',  # Homebrew on Apple Silicon
+        '/usr/local/bin/dot',     # Homebrew on Intel Mac / System install
+        '/usr/bin/dot',           # System package manager
+        'dot'                     # PATH environment
+    ]
+    
+    for dot_path in paths_to_check:
+        try:
+            if dot_path == 'dot':
+                # Check if dot is in PATH
+                result = subprocess.run(['which', 'dot'], capture_output=True, text=True, timeout=5)
+                if result.returncode == 0:
+                    actual_path = result.stdout.strip()
+                    version_result = subprocess.run(['dot', '-V'], capture_output=True, text=True, timeout=5)
+                    if version_result.returncode == 0:
+                        installations.append({
+                            'path': actual_path,
+                            'type': 'PATH',
+                            'version': version_result.stderr.strip() if version_result.stderr else 'Unknown'
+                        })
+            else:
+                # Check specific path
+                if os.path.exists(dot_path):
+                    version_result = subprocess.run([dot_path, '-V'], capture_output=True, text=True, timeout=5)
+                    if version_result.returncode == 0:
+                        install_type = 'Homebrew' if '/homebrew/' in dot_path else 'System'
+                        installations.append({
+                            'path': dot_path,
+                            'type': install_type,
+                            'version': version_result.stderr.strip() if version_result.stderr else 'Unknown'
+                        })
+        except:
+            continue
+    
+    return installations
 
 def check_java_availability():
     """Check if Java is available for running PlantUML"""

@@ -67,6 +67,9 @@ The application currently supports the following BIAN domain diagrams:
 ### Dependencies
 - Python 3.7+ (for Flask server)
 - Java 8+ (for running PlantUML jar)
+- GraphViz (for complex diagram rendering)
+  - **Homebrew**: `brew install graphviz` (recommended for macOS)
+  - **System**: Available through package managers
 - Modern web browser with JavaScript support
 - Internet connection for:
   - Tailwind CSS (CDN)
@@ -93,10 +96,11 @@ puml-ui/
 ### Server Features
 - **Flask Web Server**: Serves files on port 7777
 - **Local PlantUML Processing**: Uses local plantuml.jar for diagram generation
-- **Multiple Output Formats**: Supports SVG and PNG diagram export
+- **GraphViz Auto-Detection**: Automatically detects Homebrew, system, and PATH GraphViz installations
+- **Multiple Output Formats**: Supports SVG and PNG diagram export with proper visualization
 - **API Endpoints**: RESTful endpoints for diagram access and generation
 - **Auto Port Cleanup**: Automatically kills existing processes on port 7777
-- **Health Monitoring**: Built-in health check with Java and PlantUML status
+- **Health Monitoring**: Built-in health check with Java, PlantUML, and GraphViz status
 - **Error Handling**: Comprehensive error handling and logging
 
 ### API Endpoints

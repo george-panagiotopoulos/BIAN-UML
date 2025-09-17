@@ -135,14 +135,36 @@ class BianUMLVisualizer {
     updateSystemStatus(health) {
         const statusElement = document.querySelector('.server-status');
         if (statusElement && health) {
-            const isReady = health.java_available && health.plantuml_jar_exists;
-            const statusText = isReady ? 'Local PlantUML: Ready' : 'Local PlantUML: Setup Issues';
-            const statusColor = isReady ? 'bg-green-400' : 'bg-red-400';
+            const isReady = health.java_available && health.plantuml_jar_exists && health.graphviz_available;
+            let statusText = 'Local PlantUML: Ready';
+            let statusColor = 'bg-green-400';
+            
+            if (!health.java_available) {
+                statusText = 'Java: Not Available';
+                statusColor = 'bg-red-400';
+            } else if (!health.plantuml_jar_exists) {
+                statusText = 'PlantUML: Jar Missing';
+                statusColor = 'bg-red-400';
+            } else if (!health.graphviz_available) {
+                statusText = 'GraphViz: Not Found';
+                statusColor = 'bg-yellow-400';
+            } else if (health.graphviz_installations && health.graphviz_installations.length > 0) {
+                const installation = health.graphviz_installations[0];
+                statusText = `PlantUML + ${installation.type} GraphViz: Ready`;
+            }
             
             statusElement.innerHTML = `
                 <span class="inline-block w-2 h-2 ${statusColor} rounded-full mr-1"></span>
                 ${statusText}
             `;
+            
+            // Add tooltip with detailed GraphViz info
+            if (health.graphviz_installations && health.graphviz_installations.length > 0) {
+                const installations = health.graphviz_installations.map(inst => 
+                    `${inst.type}: ${inst.path}`
+                ).join(', ');
+                statusElement.title = `GraphViz installations: ${installations}`;
+            }
         }
     }
 
@@ -381,37 +403,80 @@ class BianUMLVisualizer {
                 throw new Error(errorData.error || `Server error: ${response.status}`);
             }
             
-            // Get the SVG content
-            const svgContent = await response.text();
+            // Get the response content
+            const contentType = response.headers.get('content-type');
+            let diagramContent;
+            let isImage = false;
+            
+            if (contentType && contentType.includes('image/')) {
+                // Handle binary image data (PNG, etc.)
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                diagramContent = imageUrl;
+                isImage = true;
+            } else {
+                // Handle text content (SVG)
+                diagramContent = await response.text();
+                isImage = false;
+            }
             
             // Create container for the diagram
             const diagramContainer = document.createElement('div');
             diagramContainer.className = 'w-full flex flex-col items-center';
             
-            // Create SVG wrapper
-            const svgWrapper = document.createElement('div');
-            svgWrapper.className = 'max-w-full overflow-auto border rounded-lg bg-white p-4 shadow-sm';
-            svgWrapper.style.maxHeight = '80vh';
-            svgWrapper.innerHTML = svgContent;
+            // Create content wrapper
+            const contentWrapper = document.createElement('div');
+            contentWrapper.className = 'max-w-full overflow-auto border rounded-lg bg-white p-4 shadow-sm';
+            contentWrapper.style.maxHeight = '80vh';
             
-            // Create download button
-            const downloadBtn = document.createElement('button');
-            downloadBtn.className = 'mt-4 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
-            downloadBtn.textContent = 'Download SVG';
-            downloadBtn.onclick = () => this.downloadSVGContent(svgContent, 'bian-diagram.svg');
+            if (isImage) {
+                // Display as image
+                const img = document.createElement('img');
+                img.src = diagramContent;
+                img.className = 'max-w-full h-auto';
+                img.style.maxHeight = '75vh';
+                contentWrapper.appendChild(img);
+            } else {
+                // Display as SVG
+                contentWrapper.innerHTML = diagramContent;
+            }
             
-            // Create PNG download button
-            const downloadPngBtn = document.createElement('button');
-            downloadPngBtn.className = 'mt-4 ml-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
-            downloadPngBtn.textContent = 'Download PNG';
-            downloadPngBtn.onclick = () => this.downloadAsPNG(umlContent);
+            // Create download buttons
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'flex gap-2 mt-4';
+            
+            if (isImage) {
+                // For images, create appropriate download button
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
+                downloadBtn.textContent = 'Download Image';
+                downloadBtn.onclick = () => this.downloadImageFromUrl(diagramContent, 'bian-diagram.png');
+                buttonContainer.appendChild(downloadBtn);
+                
+                // Also offer SVG option
+                const downloadSvgBtn = document.createElement('button');
+                downloadSvgBtn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
+                downloadSvgBtn.textContent = 'Download as SVG';
+                downloadSvgBtn.onclick = () => this.downloadAsSVG(umlContent);
+                buttonContainer.appendChild(downloadSvgBtn);
+            } else {
+                // For SVG, create SVG download button
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
+                downloadBtn.textContent = 'Download SVG';
+                downloadBtn.onclick = () => this.downloadSVGContent(diagramContent, 'bian-diagram.svg');
+                buttonContainer.appendChild(downloadBtn);
+                
+                // Also offer PNG option
+                const downloadPngBtn = document.createElement('button');
+                downloadPngBtn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200';
+                downloadPngBtn.textContent = 'Download PNG';
+                downloadPngBtn.onclick = () => this.downloadAsPNG(umlContent);
+                buttonContainer.appendChild(downloadPngBtn);
+            }
             
             // Assemble the result
-            diagramContainer.appendChild(svgWrapper);
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'flex gap-2';
-            buttonContainer.appendChild(downloadBtn);
-            buttonContainer.appendChild(downloadPngBtn);
+            diagramContainer.appendChild(contentWrapper);
             diagramContainer.appendChild(buttonContainer);
             
             // Update visualization area
@@ -488,6 +553,52 @@ class BianUMLVisualizer {
         } catch (error) {
             console.error('Error downloading PNG:', error);
             alert('Error downloading PNG: ' + error.message);
+        }
+    }
+
+    /**
+     * Download diagram as SVG (alternative method)
+     */
+    async downloadAsSVG(umlContent) {
+        try {
+            const response = await fetch('/api/generate-diagram', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    uml_content: umlContent,
+                    format: 'svg'
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to generate SVG');
+            }
+            
+            const svgContent = await response.text();
+            this.downloadSVGContent(svgContent, `bian-diagram-${Date.now()}.svg`);
+            
+        } catch (error) {
+            console.error('Error downloading SVG:', error);
+            alert('Error downloading SVG: ' + error.message);
+        }
+    }
+
+    /**
+     * Download image from blob URL
+     */
+    downloadImageFromUrl(imageUrl, filename) {
+        try {
+            const a = document.createElement('a');
+            a.href = imageUrl;
+            a.download = filename || `bian-diagram-${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Error downloading image:', error);
+            alert('Error downloading image: ' + error.message);
         }
     }
 
