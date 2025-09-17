@@ -11,6 +11,7 @@ import subprocess
 import tempfile
 import uuid
 from pathlib import Path
+from typing import Union
 
 app = Flask(__name__)
 
@@ -222,7 +223,7 @@ def generate_plantuml_diagram(uml_content, output_format='svg'):
             return any(indicator in svg_text for indicator in indicators)
 
         # Helper: run PlantUML via stdin/stdout (no temp files)
-        def run_plantuml_pipe(graphviz_dot: str | None):
+        def run_plantuml_pipe(graphviz_dot: Union[str, None]):
             cmd = [
                 'java',
                 '-Djava.awt.headless=true',
