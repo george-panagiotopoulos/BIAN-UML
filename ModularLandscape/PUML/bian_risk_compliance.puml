@@ -41,10 +41,11 @@ together {
       Regulatory Compliance
       Guideline Compliance
       Fraud Resolution
-      Financial Accounting
+      <color:#0000FF>Financial Accounting (Temenos: Subledger module)</color>
       Compliance Reporting
       Financial Statement Assessment
     }
+    note right of REG : <color:#FF0000>Financial Accounting: PI4/PI5</color>
   }
 
   package "Models" as MODELS {
