@@ -45,7 +45,7 @@ together {
       Compliance Reporting
       Financial Statement Assessment
     }
-    note right of REG : <color:#FF0000>Financial Accounting: PI4/PI5</color>
+    note right of REG : <color:#FF0000>Subledger PI4/PI5</color>
   }
 
   package "Models" as MODELS {
