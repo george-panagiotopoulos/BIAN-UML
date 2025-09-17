@@ -8,24 +8,25 @@ title BIAN Cross Product Operations Domains
 together {
   package "Payments" as PAYMENTS {
     class "Payment Services" as PAY {
-      Payment Order
-      Payment Execution
-      Financial Message Analysis
+      <color:#0000FF>Payment Order</color>
+      <color:#0000FF>Payment Execution</color>
+      <color:#0000FF>Financial Message Analysis</color>
       Financial Gateway
       Central Cash Handling
       Card Financial Settlement
       Card eCommerce Gateway
       Card Clearing
       ACH Operations
-      Cheque Processing
-      Payment Instruction
-      Correspondent Bank Operations
-      Payment Rail Operations
-      Direct Debit Mandate
-      Direct Debit
-      Cheque Lock Box
-      Payment Initiation
+      <color:#0000FF>Cheque Processing</color>
+      <color:#0000FF>Payment Instruction</color>
+      <color:#0000FF>Correspondent Bank Operations</color>
+      <color:#0000FF>Payment Rail Operations</color>
+      <color:#0000FF>Direct Debit Mandate</color>
+      <color:#0000FF>Direct Debit</color>
+      <color:#0000FF>Cheque Lock Box</color>
+      <color:#0000FF>Payment Initiation</color>
     }
+    note right of PAY : <color:#FF0000>Available standalone - full modular architecture PI5/PI6</color>
   }
 
   package "Account Management" as ACCT_MGMT {
