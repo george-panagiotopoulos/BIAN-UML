@@ -1,0 +1,68 @@
+@startuml
+!define ENTITY(name,desc) class name as "desc" << (E,#FFAAAA) >>
+!define VALUE_OBJECT(name,desc) class name as "desc" << (V,#AAAAFF) >>
+
+title Deposits Solution - Entity Relationship Diagram
+
+ENTITY(Customer, Customer)
+ENTITY(Account, Account)
+ENTITY(Deposit, Term Deposit)
+ENTITY(Product, Product)
+ENTITY(Transaction, Transaction)
+VALUE_OBJECT(SettlementInstruction, Settlement Instruction)
+VALUE_OBJECT(BlockedFunds, Blocked Funds)
+VALUE_OBJECT(PostingRestriction, Posting Restriction)
+VALUE_OBJECT(OverdraftLimit, Overdraft Limit)
+
+Customer : partyId
+Customer : partyRole
+Customer : channel
+Customer : dormancyStatus
+
+Account : accountId
+Account : accountName
+Account : accountBalance
+Account : currency
+Account : accountStatus
+Account : openingDate
+
+Deposit : accountId
+Deposit : depositAmount
+Deposit : depositTerm
+Deposit : interestPayoutFrequency
+Deposit : fundingAccount
+Deposit : payoutAccount
+
+Product : productId
+Product : productCode
+Product : productType
+
+Transaction : transactionReference
+Transaction : transactionAmount
+Transaction : valueDate
+
+SettlementInstruction : payoutAccountId
+SettlementInstruction : payInAccountId
+SettlementInstruction : enablePayInSettlement
+
+BlockedFunds : blockedReference
+BlockedFunds : blockedAmount
+BlockedFunds : startDate
+BlockedFunds : endDate
+
+PostingRestriction : restrictionCode
+PostingRestriction : blockingReason
+
+OverdraftLimit : overdraftLimitAmount
+OverdraftLimit : overdraftAvailable
+
+Customer "1" *-- "0..*" Account : owns
+Account "1" *-- "0..*" Deposit : specializes
+Account "0..*" -- "1" Product : uses
+Account "1" *-- "0..*" Transaction : has
+Account "1" *-- "0..1" SettlementInstruction : has
+Account "1" *-- "0..*" BlockedFunds : has
+Account "1" *-- "0..1" PostingRestriction : has
+Account "1" *-- "0..1" OverdraftLimit : has
+
+@enduml

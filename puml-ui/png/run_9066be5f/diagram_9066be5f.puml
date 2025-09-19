@@ -1,0 +1,201 @@
+@startuml Combined BIAN Diagrams
+
+title Combined BIAN Architecture Domains
+
+!define LAYOUT top to bottom direction
+
+' === Products, Loans & Cards Domain ===
+' Row 1 - Deposits & Retail Lending
+together {
+  package "Deposits & Accounts" as DEP {
+    class "Deposits & Accounts <color:#0000FF>(Temenos: Deposits module)</color>" as DEP_SVC {
+      <color:#0000FF>Current Account</color>
+      <color:#0000FF>Savings Account</color>
+      <color:#0000FF>Term Deposit</color>
+      Term Deposit Framework Agreement
+      <color:#0000FF>Multicurrency Account</color>
+      <color:#0000FF>Standing Order</color>
+      Virtual Account
+      <color:#0000FF>Internal Bank Account</color>
+    }
+    note right of DEP_SVC : <color:#FF0000>Pilot PI1, MVP PI2</color>
+  }
+
+  package "Retail Lending" as RETAIL_LENDING_PKG {
+    class "Retail Lending <color:#0000FF>(Temenos: Lending module)</color>" as RETAIL_LENDING {
+      <color:#0000FF>Consumer Loan</color>
+      <color:#0000FF>Mortgage Loan</color>
+      <color:#0000FF>Merchandising Loan</color>
+      Leasing
+      Leasing Item Administration
+    }
+    note right of RETAIL_LENDING : <color:#FF0000>Pilot PI2, MVP PI3</color>
+  }
+}
+
+' Row 2 - Corporate Services
+together {
+  package "Corporate Deposits" as CORP_BANKING_PKG {
+    class "Corporate Deposits" as CORP {
+      Corporate Current Account
+      Cash Management And Account Services
+      Cash Concentration
+      Notional Pooling
+      Corporate Payroll Services
+      Fiduciary Agreement
+    }
+  }
+
+  package "Corporate Lending" as CORP_LENDING_PKG {
+    class "Corporate Lending" as CORP_LENDING {
+      Corporate Loan
+      Syndicated Loan
+      Project Finance
+      Corporate Lease
+      Loan Syndication
+    }
+  }
+}
+
+' Row 3 - Risk & Cards
+together {
+  package "Limits & Collateral" as LIMITS_COLLATERAL_PKG {
+    class "Limits & Collateral" as LIMITS_COLLATERAL {
+      Credit Management
+      Collateral Asset Administration
+      Guarantee
+      Exposure Management
+      Credit Line Management
+      Credit Facility
+      Limit and Exposure Management
+    }
+  }
+
+  package "Cards" as CARDS {
+    class "Card Services" as CARD_SVC {
+      Credit Card
+      Card Authorization
+      Card Transaction Capture
+      Merchant Relations
+      Merchant Acquiring Facility
+      Card Network Participant Facility
+      Credit Card Position Keeping
+    }
+  }
+}
+
+' Row 4 - Financing & Trade
+together {
+  package "Corporate Financing and Advisory" as CORP_FIN {
+    class "Financing Services" as FIN_SVC {
+      Public Offering
+      Private Placement
+      Mergers and Acquisitions Advisory
+      Corporate Tax Advisory
+      Corporate Finance
+    }
+  }
+
+  package "Trade Banking" as TRADE {
+    class "Trade Finance" as TRADE_FIN {
+      Letter of Credit
+      Bank Guarantee
+      Factoring
+      Documentary Collections
+    }
+  }
+}
+
+' Layout positioning for 2x4 grid
+' Row 1 connections
+DEP -[hidden]right- RETAIL_LENDING_PKG
+
+' Row 2 connections
+CORP_BANKING_PKG -[hidden]right- CORP_LENDING_PKG
+
+' Row 3 connections
+LIMITS_COLLATERAL_PKG -[hidden]right- CARDS
+
+' Row 4 connections
+CORP_FIN -[hidden]right- TRADE
+
+' Vertical connections between rows
+DEP -[hidden]down- CORP_BANKING_PKG
+RETAIL_LENDING_PKG -[hidden]down- CORP_LENDING_PKG
+CORP_LENDING_PKG -[hidden]down- LIMITS_COLLATERAL_PKG
+CORP_BANKING_PKG -[hidden]down- CARDS
+LIMITS_COLLATERAL_PKG -[hidden]down- CORP_FIN
+CARDS -[hidden]down- TRADE
+
+' === Risk & Compliance Domain ===
+' Row 1
+together {
+  package "Bank Portfolio and Treasury" as PORTFOLIO {
+    class "Treasury Services" as TREASURY {
+      Stock Lending and Repos
+      Corporate Treasury Analysis
+      Corporate Treasury
+      Bank Portfolio Analysis
+      Bank Portfolio Administration
+      Asset Securitization
+      Asset And Liability Management
+    }
+  }
+
+  package "Business Analysis" as ANALYSIS {
+    class "Analytics Services" as ANALYTICS {
+      Market Analysis
+      Contribution Analysis
+      Competitor Analysis
+      Channel Portfolio
+      Branch Portfolio
+      Segment Direction
+      Customer Portfolio
+      Product Portfolio
+      Market Research
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Regulations and Compliance" as REGULATORY {
+    class "Regulatory Services" as REG {
+      Regulatory Reporting
+      Regulatory Compliance
+      Guideline Compliance
+      Fraud Resolution
+      <color:#0000FF>Financial Accounting (Temenos: Subledger module)</color>
+      Compliance Reporting
+      Financial Statement Assessment
+    }
+    note right of REG : <color:#FF0000>Subledger PI4/PI5</color>
+  }
+
+  package "Models" as MODELS {
+    class "Risk Models" as RISK_MODELS {
+      Contribution Models
+      Operational Risk Models
+      Production Risk Models
+      Business Risk Models
+      Credit and Margin Management
+      Economic Capital
+      Credit Risk Models
+      Financial Instrument Valuation Models
+      Market Risk Models
+      Liquidity Risk Models
+      Gap Analysis
+      Fraud Model
+      Customer Behavior Models
+    }
+  }
+
+}
+
+' Layout positioning
+PORTFOLIO -[hidden]right- ANALYSIS
+REGULATORY -[hidden]right- MODELS
+PORTFOLIO -[hidden]down- REGULATORY
+ANALYSIS -[hidden]down- MODELS
+
+@enduml

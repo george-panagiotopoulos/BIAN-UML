@@ -1,0 +1,72 @@
+@startuml BIAN Reference Data & Market Data
+
+title BIAN Reference Data & Market Data Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "Party" as PARTY {
+    class "Party Data" as PARTY_DATA {
+      Party Routing Profile
+      Legal Entity Directory
+    }
+  }
+
+  package "External Agency" as EXTERNAL {
+    class "External Services" as EXT_SVC {
+      Information Provider Administration
+      Syndicate Management
+      Interbank Relationship Management
+      Correspondent Bank Relationship Management
+      Correspondent Bank Directory
+      Sub Custodian Agreement
+      Product Service Agency
+      Product Broker Agreement
+      Contractor and Supplier Agreement
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Market Data" as MARKET_DATA {
+    class "Market Information" as MKT_INFO {
+      Information Provider Operation
+      Market Information Management
+      Financial Market Analysis
+      Financial Market Research
+      Quant Model
+      Market Data Switch Administration
+      Market Data Switch Operation
+    }
+
+    class "Financial Instruments" as INSTRUMENTS {
+      Financial Instrument Reference Data Management
+      Counterparty Administration
+      Public Reference Data Management
+      Location Data Management
+    }
+  }
+
+  package "Product Management" as PRODUCT_MGMT {
+    class "Product Services <color:#0000FF>(Temenos: Product Catalogue module and Pricing module)</color>" as PROD {
+      <color:#0000FF>Product Design (Product Catalogue)</color>
+      <color:#0000FF>Product Deployment (Product Catalogue)</color>
+      Product Training
+      Product Quality Assurance
+      <color:#0000FF>Discount Pricing (Pricing)</color>
+      <color:#0000FF>Product Directory (Product Catalogue)</color>
+      <color:#0000FF>Special Pricing Conditions (Pricing)</color>
+    }
+    note right of PROD : <color:#FF0000>Available standalone - full modular architecture PI5/PI6</color>
+  }
+}
+
+' Layout positioning
+PARTY -[hidden]right- EXTERNAL
+MARKET_DATA -[hidden]right- PRODUCT_MGMT
+PARTY -[hidden]down- MARKET_DATA
+EXTERNAL -[hidden]down- PRODUCT_MGMT
+
+@enduml

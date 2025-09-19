@@ -1,0 +1,60 @@
+@startuml BIAN Investment & Market Operations
+
+title BIAN Investment & Market Operations Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "Investment Management" as INVESTMENT {
+    class "Investment Services" as INVEST {
+      Investment Portfolio Planning
+      Investment Portfolio Analysis
+      Investment Portfolio Management
+      Investment Account
+      eTrading Workbench
+    }
+  }
+
+  package "Wholesale Trading" as WHOLESALE {
+    class "Trading Services" as TRADING {
+      Trading Book Oversight
+      Trading Models
+      Dealer Desk
+      Quote Management
+      Suitability Checking
+      Credit Risk Operations
+      Market Making
+      ECM And DCM
+      Program Trading
+      Trader Position Operations
+      Market Order
+      Market Order Execution
+    }
+  }
+}
+
+' Row 2
+package "Market Operations" as MARKET_OPS {
+  class "Market Services" as MKT_OPS {
+    Mutual Fund Administration
+    Hedge Fund Administration
+    Unit Trust Administration
+    Trade Confirmation Matching
+    Order Allocation
+    Securities Fails Processing
+    Trade and Price Reporting
+    Custody Administration
+    Corporate Action
+    Financial Instrument Valuation
+    Trade Clearing
+    Trade Settlement
+  }
+}
+
+' Layout positioning
+INVESTMENT -[hidden]right- WHOLESALE
+INVESTMENT -[hidden]down- MARKET_OPS
+WHOLESALE -[hidden]down- MARKET_OPS
+
+@enduml

@@ -1,0 +1,1575 @@
+[
+	{
+		"key": "defaultSettlementAccountId",
+		"dataType": "string",
+		"description": "Specifies the main account where deposit proceeds (principal and interest) are automatically credited",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_DefaultSettlementAccount"
+		],
+		"contexts": [
+			{
+				"usage": "createSettlementInstruction"
+			}
+		]
+	},
+	{
+		"key": "code",
+		"dataType": "string",
+		"description": "Identifier of a business/System error message encountered during the request.",
+		"contexts": [
+			{
+				"usage": "errorResponse"
+			}
+		]
+	},
+	{
+		"key": "payoutBeneficiaryId",
+		"dataType": "string",
+		"description": "Specifies the beneficiary receiving deposit payouts; cannot be used with a payout account.",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_PayoutBeneficiary"
+		],
+		"contexts": [
+			{
+				"usage": "createSettlementInstructions"
+			}
+		]
+	},
+	{
+		"key": "endDate",
+		"dataType": "string",
+		"description": "Date when the blocked funds will be automatically released. If empty, block persists until manually removed",
+		"linkedField": [
+			"AC.LOCKED.EVENTS_endDate"
+		],
+		"contexts": [
+			{
+				"usage": "addAccountsBlockFunds"
+			},
+			{
+				"usage": "updateAccountsBlockFunds"
+			},
+			{
+				"usage": "BlockedFund"
+			},
+			{
+				"usage": "createPostingRestrictions",
+				"description": "The date when a posting restriction on a deposits/account ends.",
+				"linkedField": [
+					"AA.PRD.DES.ACCOUNT_ExpiryDate"
+				]
+			}
+		]
+	},
+	{
+		"key": "accountName",
+		"dataType": "string",
+		"description": "Friendly nickname for the account being opened, e.g., 'MySavingsAccount'.",
+		"linkedField": [
+			"AA.PRD.DES.ACCOUNT_ShortTitle"
+		],
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts"
+			},
+			{
+				"usage": "createSavingsAccounts"
+			},
+			{
+				"usage": "getAccountInfo"
+			},
+			{
+				"usage": "createTermDeposits",
+				"description": "Customer-provided nickname for the deposit account, e.g., 'MyDepositAccount'."
+			}
+		]
+	},
+	{
+		"key": "overdraftAvailable",
+		"dataType": "boolean",
+		"description": "Indicates whether the overdraft limit is available for use.",
+		"linkedField": [
+			"AA.PRD.DES.LIMIT_UseSecondaryLimit"
+		],
+		"contexts": [
+			{
+				"usage": "createAccountsOverdraftLimits"
+			},
+			{
+				"usage": "updateAccountsOverdraftLimits"
+			}
+		]
+	},
+	{
+		"key": "blockRemarks",
+		"dataType": "string",
+		"description": "Short description explaining why the funds are blocked.",
+		"linkedField": [
+			"AC.LOCKED.EVENTS_Description"
+		],
+		"contexts": [
+			{
+				"usage": "addAccountsBlockFunds"
+			},
+			{
+				"usage": "updateAccountsBlockFunds"
+			}
+		]
+	},
+	{
+		"key": "referenceType",
+		"dataType": "string",
+		"description": "Type of alternate reference used for the deposit, such as IBAN, LEGACY, or system-specific identifiers.",
+		"linkedField": [
+			"AA.PRD.DES.ACCOUNT_AltIdType"
+		],
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts"
+			},
+			{
+				"usage": "createSavingsAccounts"
+			}
+		],
+		"enum": [
+			"IBAN",
+			"LEGACY",
+			"PREV.IBAN",
+			"T24.IBAN"
+		]
+	},
+	{
+		"key": "blockedReference",
+		"dataType": "string",
+		"description": "Reference ID capturing the blocked funds event for tracking purposes.",
+		"linkedField": [
+			"AC.LOCKED.EVENTS_Id"
+		],
+		"contexts": [
+			{
+				"usage": "addAccountsBlockFunds"
+			}
+		]
+	},
+	{
+		"key": "payInBeneficiaryId",
+		"dataType": "string",
+		"description": "The beneficiary that will be debited for billed amounts. Mutually exclusive with Settlement Account.",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_PayinBeneficiary"
+		],
+		"contexts": [
+			{
+				"usage": "createSettlementInstructions"
+			}
+		]
+	},
+	{
+		"key": "payInAccountId",
+		"dataType": "string",
+		"description": "The account that will be debited for billed amounts. Mutually exclusive with Settlement Beneficiary.",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_PayinAccount"
+		],
+		"contexts": [
+			{
+				"usage": "createSettlementInstructions"
+			}
+		]
+	},
+	{
+		"key": "blockedAmount",
+		"dataType": "number",
+		"description": "Amount of funds locked or blocked in the account.",
+		"linkedField": [
+			"AC.LOCKED.EVENTS_LockedAmount"
+		],
+		"contexts": [
+			{
+				"usage": "addAccountsBlockFunds"
+			},
+			{
+				"usage": "updateAccountsBlockFunds"
+			},
+			{
+				"usage": "AccountInfoResponse"
+			}
+		]
+	},
+	{
+		"key": "availableBalance",
+		"dataType": "number",
+		"description": "Usable balance in the account after considering cleared balance, pending debits, blocked funds, and limits.",
+		"contexts": [
+			{
+				"usage": "AccountInfoResponse"
+			}
+		]
+	},
+	{
+		"key": "restrictionCode",
+		"dataType": "string",
+		"description": "Predefined code indicating the type of posting restriction (1->DR_BLOCK, 2->CR_BLOCK, 3->ALL_BLOCK).",
+		"linkedField": [
+			"AA.PRD.DES.ACCOUNT_PostingRestrict"
+		],
+		"contexts": [
+			{
+				"usage": "createPostingRestrictions"
+			},
+			{
+				"usage": "unblockcreatePostingRestrictions"
+			}
+		]
+	},
+	{
+		"key": "unblockingCode",
+		"dataType": "string",
+		"description": "Predefined code used to lift a posting restriction linked to restrictionCode.",
+		"linkedField": [
+			"AA.PRD.DES.ACCOUNT_UnblockingCode"
+		],
+		"contexts": [
+			{
+				"usage": "unblockcreatePostingRestrictions"
+			}
+		]
+	},
+	{
+		"key": "blockingCode",
+		"dataType": "string",
+		"description": "Predefined code used to apply a posting restriction linked to restrictionCode.",
+		"linkedField": [
+			"AA.PRD.DES.ACCOUNT_BlockingCode"
+		],
+		"contexts": [
+			{
+				"usage": "createPostingRestrictions"
+			}
+		]
+	},
+	{
+		"key": "currency",
+		"dataType": "string",
+		"description": "ISO 3-digit code indicating the currency of the account e.g., USD.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_Currency"
+		],
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts"
+			},
+			{
+				"usage": "createSavingsAccounts"
+			},
+			{
+				"usage": "AccountInfoResponse"
+			},
+			{
+				"usage": "createTermDeposits",
+				"description": "ISO 3-digit code indicating the currency of the deposits e.g., USD."
+			},
+			{
+				"usage": "createEarlyWithdrawals",
+				"description": "ISO 3-digit code indicating the currency of the deposits e.g., USD."
+			}
+		]
+	},
+	{
+		"key": "unblockingReason",
+		"dataType": "string",
+		"description": "Free text capturing the reason for removing a posting restriction.",
+		"linkedField": [
+			"AA.PRD.DES.ACCOUNT_UnblockingReason"
+		],
+		"contexts": [
+			{
+				"usage": "unblockcreatePostingRestrictions"
+			}
+		]
+	},
+	{
+		"key": "partyId",
+		"dataType": "string",
+		"description": "Unique customer identifier used during account opening. Can represent multiple parties for joint accounts.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_Customer"
+		],
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts"
+			},
+			{
+				"usage": "createSavingsAccounts"
+			},
+			{
+				"usage": "createTermDeposits",
+				"description": "Unique identifier of a customer associated with the deposit account; supports multiple parties."
+			}
+		]
+	},
+	{
+		"key": "enablePayInSettlement",
+		"dataType": "boolean",
+		"description": "Enables automatic settlement for incoming payments",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_PayinSettlement"
+		],
+		"contexts": [
+			{
+				"usage": "createSettlementInstructions"
+			}
+		]
+	},
+	{
+		"key": "openingDate",
+		"dataType": "string",
+		"description": "Effective date of account/deposit creation; can be backdated if required.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_EffectiveDate"
+		],
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts"
+			},
+			{
+				"usage": "createSavingsAccounts"
+			},
+			{
+				"usage": "createTermDeposits"
+			}
+		]
+	},
+	{
+		"key": "blockingReference",
+		"dataType": "string",
+		"description": "External reference to identify the blocked funds transaction.",
+		"linkedField": [
+			"AC.LOCKED.EVENTS_ReserveAltKey"
+		],
+		"contexts": [
+			{
+				"usage": "addAccountsBlockFunds"
+			},
+			{
+				"usage": "updateAccountsBlockFunds"
+			}
+		]
+	},
+	{
+		"key": "quotationReference",
+		"dataType": "string",
+		"description": "Reference from the origination or simulation system used to open the account.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_ContextName,AA.ARRANGEMENT.ACTIVITY_ContextValue"
+		],
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts"
+			},
+			{
+				"usage": "createSavingsAccounts"
+			},
+			{
+				"usage": "createTermDeposits"
+			}
+		]
+	},
+	{
+		"key": "accountReference",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts",
+				"description": "Alternate account identifier linked to referenceType, e.g., IBAN or legacy system."
+			},
+			{
+				"usage": "createSavingsAccounts",
+				"description": "Alternate account identifier linked to referenceType, e.g., IBAN or legacy system."
+			},
+			{
+				"usage": "createTermDeposits",
+				"description": "Alternate account identifier linked to referenceType, e.g., IBAN or legacy system."
+			},
+			{
+				"usage": "AccountsResponse",
+				"description": "Alternate account identifier returned in account details."
+			},
+			{
+				"usage": "AccountInfoResponse",
+				"description": "Alternate account identifier returned in account details."
+			}
+		]
+	},
+	{
+		"key": "newFrequency",
+		"dataType": "string",
+		"description": "New statement frequency for the account/Deposit.",
+		"linkedField": [
+			"AA.PRD.DES.STATEMENT_StmtFqu1"
+		],
+		"contexts": [
+			{
+				"usage": "changeStatementFrequencies"
+			}
+		],
+		"enum": [
+			"Daily",
+			"Weekly",
+			"Monthly",
+			"Quarterly",
+			"Annually"
+		]
+	},
+	{
+		"key": "productId",
+		"dataType": "string",
+		"description": "Product in which the account/Deposit is opened, e.g., PremiumCurrentAccount,FlexiTermDeposit",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_Product"
+		],
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts"
+			},
+			{
+				"usage": "createSavingsAccounts"
+			},
+			{
+				"usage": "getAccountInfo"
+			},
+			{
+				"usage": "createTermDeposits"
+			}
+		]
+	},
+	{
+		"key": "narrative",
+		"dataType": "string",
+		"description": "Note describing the overdraft limit change.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_Narrative"
+		],
+		"contexts": [
+			{
+				"usage": "createAccountsOverdraftLimits"
+			},
+			{
+				"usage": "updateAccountsOverdraftLimits"
+			},
+			{
+				"usage": "deleteAccountsOverdraftLimits"
+			},
+			{
+				"usage": "changeStatementFrequencies",
+				"description": "Description of the statement frequency change."
+			},
+			{
+				"usage": "createEarlyWithdrawals",
+				"description": "Reason for early withdrawal of deposits"
+			}
+		]
+	},
+	{
+		"key": "overdraftLimit",
+		"dataType": "string",
+		"description": "Maximum approved overdraft limit for the account.",
+		"contexts": [
+			{
+				"usage": "getAccountInfo"
+			}
+		]
+	},
+	{
+		"key": "message",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "errorResponse",
+				"description": "Actual error message occured during the request"
+			}
+		]
+	},
+	{
+		"key": "enablePayoutSettlement",
+		"dataType": "boolean",
+		"description": "Enables automatic settlement for outgoing payout amounts",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_PayoutSettlement"
+		],
+		"contexts": [
+			{
+				"usage": "createSettlementInstructions"
+			}
+		]
+	},
+	{
+		"key": "activityReference",
+		"dataType": "string",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_Id"
+		],
+		"description" : "Reference Id generated in response for all the accounts/deposits activities performed"
+	},
+	{
+		"key": "overdraftLimitAmount",
+		"dataType": "number",
+		"description": "Maximum amount allowed for overdraft usage.",
+		"linkedField": [
+			"AA.PRD.DES.LIMIT_SecondaryLimitAmt"
+		],
+		"contexts": [
+			{
+				"usage": "createAccountsOverdraftLimits"
+			},
+			{
+				"usage": "updateAccountsOverdraftLimits"
+			}
+		]
+	},
+	{
+		"key": "blockingReason",
+		"dataType": "string",
+		"description": "Free text explaining why a posting restriction was applied.",
+		"linkedField": [
+			"AA.PRD.DES.ACCOUNT_BlockingReason"
+		],
+		"contexts": [
+			{
+				"usage": "createPostingRestrictions"
+			}
+		]
+	},
+	{
+		"key": "versionNumber",
+		"dataType": "string",
+		"description": "The CURR.NO. of the record",
+		"contexts": [
+			{
+				"usage": "PayloadHeader"
+			}
+		]
+	},
+	{
+		"key": "branchCode",
+		"dataType": "string",
+		"description": "Branch code where the account is opened; affects benefits and pricing.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_Branch"
+		],
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts"
+			},
+			{
+				"usage": "createSavingsAccounts"
+			},
+			{
+				"usage": "createTermDeposits"
+			}
+		]
+	},
+	{
+		"key": "accountId",
+		"dataType": "string",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_Arrangement"
+		],
+		"contexts": [
+			{
+				"usage": "createAccountsOverdraftLimits",
+				"description": "Account to which the overdraft limit will be applied."
+			},
+			{
+				"usage": "updateAccountsOverdraftLimits",
+				"description": "Account to which the overdraft limit will be applied."
+			},
+			{
+				"usage": "deleteAccountsOverdraftLimits",
+				"description": "Account to which the overdraft limit will be applied."
+			},
+			{
+				"usage": "addAccountsBlockFunds",
+				"description": "Account/deposit where funds are blocked."
+			},
+			{
+				"usage": "updateAccountsBlockFunds",
+				"description": "Account/deposit where funds are blocked."
+			},
+			{
+				"usage": "BlockFundsResponse",
+				"description": "Account where funds are blocked."
+			},
+			{
+				"usage": "createPostingRestrictions",
+				"description": "Account/deposit to which posting restrictions must be enabled"
+			},
+			{
+				"usage": "unblockcreatePostingRestrictions",
+				"description": "Account/deposit to which posting restrictions must be disabled"
+			},
+			{
+				"usage": "createSettlementInstructions",
+				"description": "Account/deposit to which the settlement instructions will be enabled or not"
+			},
+			{
+				"usage": "changeStatementFrequencies",
+				"description": "Account/deposit to which the statement frequency will change"
+			},
+			{
+				"usage": "changePaymentSchedule",
+				"description": "Account/deposit to which the payment schedule will change"
+			}
+		]
+	},
+	{
+		"key": "ledgerBalance",
+		"dataType": "number",
+		"description": "Actual account balance including uncleared credits.",
+		"contexts": [
+			{
+				"usage": "AccountInfoResponse"
+			}
+		]
+	},
+	{
+		"key": "payoutAccountId",
+		"dataType": "string",
+		"description": "Account that will be credited during payout. Cannot be used with settlement beneficiary.",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_PayoutAccount"
+		],
+		"contexts": [
+			{
+				"usage": "createSettlementInstructions"
+			}
+		]
+	},
+	{
+		"key": "partyRole",
+		"dataType": "string",
+		"description": "Role of the customer in the account/deposit, e.g., owner, joint owner, nominee.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_CustomerRole"
+		],
+		"contexts": [
+			{
+				"usage": "createCurrentAccounts"
+			},
+			{
+				"usage": "createSavingsAccounts"
+			},
+			{
+				"usage": "createTermDeposits"
+			}
+		],
+		"enum": [
+			"AGENT",
+			"AGENT.CUM.PARTICIPANT",
+			"APPLICANT",
+			"BUYER",
+			"DEALER",
+			"GUARANTOR",
+			"GUARDIAN",
+			"INTERMEDIARY",
+			"INVESTOR",
+			"JOINT.OWNER",
+			"LEGAL.OWNER",
+			"LESSEE",
+			"OWNER",
+			"PARTICIPANT",
+			"PARTNER",
+			"POWER.OF.ATTORNEY",
+			"RISK.PARTICIPANT",
+			"SOLICITOR",
+			"SUB-LESSEE",
+			"SUB-PARTICIPANT",
+			"SUB.PARTICIPANT",
+			"SUPPLIER"
+		]
+	},
+	{
+		"key": "defaultBeneficiaryId",
+		"dataType": "string",
+		"description": "Default beneficiary used when no detailed instructions exist. Cannot be used with default settlement account.",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_DefaultBeneficiary"
+		],
+		"contexts": [
+			{
+				"usage": "createSettlementInstructions"
+			}
+		]
+	},
+	{
+		"key": "startDate",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "addAccountsBlockFunds",
+				"description": "Date when the fund block becomes effective. Defaults to current banking date.",
+				"linkedField": [
+					"AC.LOCKED.EVENTS_FromDate"
+				]
+			},
+			{
+				"usage": "updateAccountsBlockFunds",
+				"description": "Date when the fund block becomes effective. Defaults to current banking date.",
+				"linkedField": [
+					"AC.LOCKED.EVENTS_FromDate"
+				]
+			},
+			{
+				"usage": "createPostingRestrictions",
+				"description": "Date when posting restriction becomes effective.",
+				"linkedField": [
+					"AC.LOCKED.EVENTS_StartDate"
+				]
+			},
+			{
+				"usage": "BlockedFund",
+				"description": "Date when the fund block becomes effective. Defaults to current banking date."
+			},
+			{
+				"usage": "AccountDetailsSuccessResponse",
+				"description": "Date on which the transaction or payment gets initiated."
+			}
+		]
+	},
+	{
+		"key": "effectiveDate",
+		"dataType": "string",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_EffectiveDate"
+		],
+		"contexts": [
+			{
+				"usage": "createAccountsOverdraftLimits",
+				"description": "Date when overdraft limit change becomes effective. Defaults to current banking date."
+			},
+			{
+				"usage": "updateAccountsOverdraftLimits",
+				"description": "Date when overdraft limit change becomes effective. Defaults to current banking date."
+			},
+			{
+				"usage": "deleteAccountsOverdraftLimits",
+				"description": "Date when overdraft limit removal becomes effective. Defaults to current banking date."
+			},
+			{
+				"usage": "changeStatementFrequencies",
+				"description": "Date when the new statement frequency becomes effective."
+			},
+			{
+				"usage": "createEarlyWithdrawals",
+				"description": "Date when early withdrawal of deposit becomes effective"
+			}
+		]
+	},
+	{
+		"key": "payoutAccount",
+		"dataType": "string",
+		"description": "Account designated to receive the deposit proceeds, including principal and interest.",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_PayoutAccount"
+		],
+		"contexts": [
+			{
+				"usage": "createTermDeposits"
+			}
+		]
+	},
+	{
+		"key": "fundingAccount",
+		"dataType": "string",
+		"description": "Account from which funds are debited to create the deposit.",
+		"linkedField": [
+			"AA.PRD.DES.SETTLEMENT_PayinAccount"
+		],
+		"contexts": [
+			{
+				"usage": "createTermDeposits"
+			}
+		]
+	},
+	{
+		"key": "withdrawalType",
+		"dataType": "string",
+		"description": "Indicates whether an early withdrawal is full or partial, affecting interest and penalties.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_Activity"
+		],
+		"contexts": [
+			{
+				"usage": "createEarlyWithdrawals"
+			}
+		]
+	},
+	{
+		"key": "withdrawalAmount",
+		"dataType": "string",
+		"description": "Amount withdrawn for a partial early withdrawal; required if withdrawal type is partial.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_TxnAmount"
+		],
+		"contexts": [
+			{
+				"usage": "createEarlyWithdrawals"
+			}
+		]
+	},
+	{
+		"key": "depositAmount",
+		"dataType": "string",
+		"description": "Principal amount for which the deposit account is opened.",
+		"linkedField": [
+			"AA.PRD.DES.TERM.AMOUNT_Amount"
+		],
+		"contexts": [
+			{
+				"usage": "createTermDeposits"
+			}
+		]
+	},
+	{
+		"key": "interestPayoutFrequency",
+		"dataType": "string",
+		"description": "Frequency of interest payments to be paid",
+		"linkedField": [
+			"AA.PRD.DES.PAYMENT.SCHEDULE_PaymentFreq"
+		],
+		"contexts": [
+			{
+				"usage": "createTermDeposits"
+			}
+		],
+		"enum": [
+			"Monthly",
+			"Quarterly",
+			"Semi-Annually",
+			"Annually"
+		]
+	},
+	{
+		"key": "depositTerm",
+		"dataType": "string",
+		"description": "Duration of the deposit in D/W/M/Y format, e.g., 12M for 12 months.",
+		"linkedField": [
+			"AA.ARRANGEMENT.ACTIVITY_Term"
+		],
+		"contexts": [
+			{
+				"usage": "createTermDeposits"
+			}
+		]
+	},
+	{
+		"key": "interestPayoutOption",
+		"dataType": "string",
+		"description": "contains field describes how the interest must be paid to customer. (i) The interest on the deposit can be paid to the customer on maturity or rollover. For this the user must keyin 'Settle at Maturity/Rollover'. (ii) The interest on the deposit can be added to the principal of the deposit on every rollover. For this the user must keyin 'Capitalise at Rollover'. (iii) The interest can be paid to the customer on the frequency specified in the field 'interestPayoutFrequency'. For this the user must keyin 'Settle at Scheduled Frequency'. (iv) The interest can be capitalised to the deposit amount on the frequency specified in the field 'interestPayoutFrequency'. For this the user must keyin 'Capitalise at Scheduled Frequency'. When this field blank, the interest is paid on maturity of the deposit. ",
+		"linkedField": [
+			"AA.PRD.DES.PAYMENT.SCHEDULE_StartDate",
+			"AA.PRD.DES.PAYMENT.SCHEDULE_PaymentMethod"
+		],
+		"contexts": [
+			{
+				"usage": "createTermDeposits"
+			}
+		],
+		"enum": [
+			"Settle at Maturity/Rollover",
+			"Capitalise at Rollover",
+			"Settle at Scheduled Frequency",
+			"Capitalise at Scheduled Frequency"
+		]
+	},
+	{
+		"key": "paymentTransactionReference",
+		"dataType": "string",
+		"linkedField": [
+			"AC.ENTRY.PARAM_TransReference"
+		],
+		"contexts": [
+			{
+				"usage": "createInternalTransfer",
+				"description": "Unique reference for internal fund transfer associated with deposits/accounts"
+			},
+			{
+				"usage": "createDebitAccount",
+				"description": "Unique reference for debit transactions in deposit/account operations."
+			},
+			{
+				"usage": "createCreditAccount",
+				"description": "Unique reference for debit transactions in deposit/account operations."
+			}
+		]
+	},
+	{
+		"key": "paymentValueDate",
+		"dataType": "string",
+		"linkedField": [
+			"AC.ENTRY.PARAM_ValueDate"
+		],
+		"contexts": [
+			{
+				"usage": "createInternalTransfer",
+				"description": "Date when the transfer is executed (current, past, or future)"
+			},
+			{
+				"usage": "createDebitAccount",
+				"description": "Value date on which the debit is posted to the deposit account."
+			},
+			{
+				"usage": "createCreditAccount",
+				"description": "Value date on which the credit is posted to the deposit account."
+			},
+			{
+				"usage": "createReserveFunds",
+				"description": "Value date for fund reservation in the deposit account."
+			}
+		]
+	},
+	{
+		"key": "creditAccount",
+		"dataType": "string",
+		"linkedField": [
+			"AC.ENTRY.PARAM_Account"
+		],
+		"contexts": [
+			{
+				"usage": "createInternalTransfer",
+				"description": "Account number receiving credited funds for deposit/account related transactions."
+			},
+			{
+				"usage": "createCreditAccount",
+				"description": "Deposit or current account where funds are credited."
+			}
+		]
+	},
+	{
+		"key": "debitAccount",
+		"dataType": "string",
+		"linkedField": [
+			"AC.ENTRY.PARAM_Account"
+		],
+		"contexts": [
+			{
+				"usage": "createInternalTransfer",
+				"description": "Account from which funds are debited for deposit/account related transactions."
+			},
+			{
+				"usage": "createDebitAccount",
+				"description": "Deposit account where funds are debited."
+			},
+			{
+				"usage": "createReserveFunds",
+				"description": "Deposit account where funds are reserved."
+			}
+		]
+	},
+	{
+		"key": "debitCurrency",
+		"dataType": "string",
+		"linkedField": [
+			"AC.ENTRY.PARAM_Currency"
+		],
+		"contexts": [
+			{
+				"usage": "createInternalTransfer",
+				"description": "Currency in which funds are debited."
+			},
+			{
+				"usage": "createDebitAccount",
+				"description": "Currency for debit transactions."
+			},
+			{
+				"usage": "createReserveFunds",
+				"description": "Currency used for fund reservation."
+			}
+		]
+	},
+	{
+		"key": "transactionReference",
+		"dataType": "string",
+		"description": "Unique transaction identifier for retrieving deposit/account booking details.",
+		"linkedField": [
+			"AC.INWARD.ENTRY_Id"
+		],
+		"contexts": [
+			{
+				"usage": "BookEntriesResponse"
+			}
+		]
+	},
+	{
+		"key": "paymentReservationReference",
+		"dataType": "string",
+		"linkedField": [
+			"AC.ENTRY.PARAM_ReservationKey"
+		],
+		"contexts": [
+			{
+				"usage": "createInternalTransfer",
+				"description": "Reference key for reserved funds in a transaction."
+			},
+			{
+				"usage": "createDebitAccount",
+				"description": "Reference for reserved funds to reverse and perform debit booking."
+			},
+			{
+				"usage": "createCreditAccount",
+				"description": "Reference for reserved funds to reverse and perform credit booking."
+			},
+			{
+				"usage": "createReserveFunds",
+				"description": "Contains the details of the reservation key input for a transaction."
+			}
+		]
+	},
+	{
+		"key": "paymentAmount",
+		"dataType": "number",
+		"linkedField": [
+			"AC.ENTRY.PARAM_Amount"
+		],
+		"contexts": [
+			{
+				"usage": "createInternalTransfer",
+				"description": "Amount to be transferred in deposit-related internal transfer."
+			},
+			{
+				"usage": "createDebitAccount",
+				"description": "Amount to debit from the deposit or current account."
+			},
+			{
+				"usage": "createCreditAccount",
+				"description": "Amount to credit to a deposit or current account"
+			},
+			{
+				"usage": "createReserveFunds",
+				"description": "Amount to reserve in a deposit account."
+			}
+		]
+	},
+	{
+		"key": "paymentDescription",
+		"dataType": "string",
+		"linkedField": [
+			"AC.ENTRY.PARAM_Narrative"
+		],
+		"contexts": [
+			{
+				"usage": "createInternalTransfer",
+				"description": "Description or purpose of internal fund transfer related to deposits."
+			},
+			{
+				"usage": "createDebitAccount",
+				"description": "Description of the debit transaction in deposit operations."
+			},
+			{
+				"usage": "createCreditAccount",
+				"description": "Description of the credit transaction in deposit operations."
+			},
+			{
+				"usage": "createReserveFunds",
+				"description": "Reason for reserving funds in the deposit account."
+			}
+		]
+	},
+	{
+		"key": "creditCurrency",
+		"dataType": "string",
+		"description": "Currency in which the credit will be received in the deposit account.",
+		"linkedField": [
+			"AC.ENTRY.PARAM_Currency"
+		],
+		"contexts": [
+			{
+				"usage": "createCreditAccount"
+			}
+		]
+	},
+	{
+		"key": "channel",
+		"dataType": "string",
+		"description": "Captures the origination or servicing channel through which the account or transaction was initiated, such as BRANCH or ONLINE.",
+		"contexts": [
+			{
+				"usage": "getPartyAccountDetails"
+			},
+			{
+				"usage": "getDepositActivityHistory"
+			},
+			{
+				"usage": "getAccountActivityHistory"
+			},
+			{
+				"usage": "getAccountDetails"
+			}
+		]
+	},
+	{
+		"key": "branch",
+		"dataType": "string",
+		"description": "Represents the branch identifier or code where the account activity was executed, supporting branch-level reporting and audit.",
+		"contexts": [
+			{
+				"usage": "ActivityHistoryResponse"
+			},
+			{
+				"usage": "AccountDetailsSuccessResponse"
+			}
+		]
+	},
+	{
+		"key": "amountBlocked",
+		"dataType": "number",
+		"contexts": [
+			{
+				"usage": "BlockedFund",
+				"description": "Denotes the portion of funds that are reserved, blocked, or placed on hold within the account, rendering them unavailable for customer use."
+			}
+		]
+	},
+	{
+		"key": "depositBalance",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "DepositBalanceResponse",
+				"description": "Reflects the principal amount currently held in the deposit arrangement."
+			}
+		]
+	},
+	{
+		"key": "property",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "changePaymentSchedule",
+				"description": "Identifies the product property associated with a payment schedule or account configuration."
+			},
+			{
+				"usage": "errorResponse",
+				"description": "Identifies against which property in payload error is thrown"
+			}
+		]
+	},
+	{
+		"key": "merchant",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Defines the merchant code provided in the transaction, enabling transaction source identification."
+			}
+		]
+	},
+	{
+		"key": "status",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountDetailsSuccessResponse",
+				"description": "Indicates the operational status of the account arrangement (e.g., ACTIVE, CLOSED, BLOCKED), essential for monitoring the account lifecycle."
+			}
+		]
+	},
+	{
+		"key": "role",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountDetailsSuccessResponse",
+				"description": "Defines the customer’s role or relationship type in the context of the account arrangement."
+			}
+		]
+	},
+	{
+		"key": "subAccount",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse",
+				"description": "Specifies the subaccount number within a parent account structure."
+			}
+		]
+	},
+	{
+		"key": "paymentType",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "changePaymentSchedule",
+				"description": "Indicates the type of payment defined in the payment schedule (e.g., interest, principal)."
+			}
+		]
+	},
+	{
+		"key": "accountStatus",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse",
+				"description": "Reflects the overall account condition, such as Current, Unauthorized, Fully Funded, Partially Funded, or Not Funded."
+			}
+		]
+	},
+	{
+		"key": "activityDate",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "ActivityItem",
+				"description": "Captures the banking or booking date of an activity (format: YYYY-MM-DD)."
+			}
+		]
+	},
+	{
+		"key": "term",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountDetailsSuccessResponse",
+				"description": "Specifies the contractual period during which BID and OFFER rates apply."
+			}
+		]
+	},
+	{
+		"key": "product",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountDetailsSuccessResponse",
+				"description": "Identifies the unique product linked to the account, such as the arrangement’s product ID."
+			}
+		]
+	},
+	{
+		"key": "productCode",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountsBlockFundsResponse",
+				"description": "Represents the product code associated with the account for classification and processing."
+			}
+		]
+	},
+	{
+		"key": "subAccountNumber",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "For multi-currency accounts, identifies the sub-account to which a transaction was posted."
+			}
+		]
+	},
+	{
+		"key": "accountBalance",
+		"dataType": "number",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse",
+				"description": "Represents the real-time available balance of the account, showing accessible funds."
+			}
+		]
+	},
+	{
+		"key": "lineOfBusiness",
+		"dataType": "string",
+		"description": "Specifies the banking line of business (e.g., RETAIL, CORPORATE) under which the account is managed.",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse"
+			},
+			{
+				"usage": "ActivityHistoryResponse"
+			},
+			{
+				"usage": "AccountDetailsSuccessResponse"
+			}
+		]
+	},
+	{
+		"key": "contractDate",
+		"dataType": "string",
+		"description": "Records the date on which the contract was created or the original agreement was signed.",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse"
+			},
+			{
+				"usage": "AccountDetailsSuccessResponse"
+			}
+		]
+	},
+	{
+		"key": "closingBalance",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Reflects the closing balance of the account at the end date of the statement period."
+			}
+		]
+	},
+	{
+		"key": "transactionDescription",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Defines the descriptive text associated with the transaction code."
+			}
+		]
+	},
+	{
+		"key": "acquirer",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Identifies the acquiring institution or acquirer code linked to the transaction."
+			}
+		]
+	},
+	{
+		"key": "paymentFrequency",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "changePaymentSchedule",
+				"description": "Indicates the recurrence interval at which payments are generated"
+			}
+		],
+		"enum": [
+			"Daily",
+			"Weekly",
+			"Monthly",
+			"Quarterly",
+			"Annually"
+		]
+	},
+	{
+		"key": "reference",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Provides the transaction reference identifier for reconciliation and tracking."
+			}
+		]
+	},
+	{
+		"key": "subAccountCurrency",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse",
+				"description": "Represents the ISO 3-digit currency code of the sub-account (e.g., USD)."
+			}
+		]
+	},
+	{
+		"key": "maturityDate",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountDetailsSuccessResponse",
+				"description": "Specifies the contractual maturity date for the arrangement or product."
+			}
+		]
+	},
+	{
+		"key": "openingBalance",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Reflects the balance of the account prior to the start date of the statement period."
+			}
+		]
+	},
+	{
+		"key": "subAccountBalance",
+		"dataType": "number",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse",
+				"description": "Represents the current balance maintained in the sub-account."
+			}
+		]
+	},
+	{
+		"key": "companyCode",
+		"dataType": "string",
+		"description": "Identifies the company, entity, or branch responsible for maintaining the account (e.g., US001000).",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse"
+			},
+			{
+				"usage": "AccountsBlockFundsResponse"
+			},
+			{
+				"usage": "AccountDetailsSuccessResponse"
+			}
+		]
+	},
+	{
+		"key": "activityAmount",
+		"dataType": "number",
+		"contexts": [
+			{
+				"usage": "ActivityItem",
+				"description": "Captures the monetary value involved in a specific account activity."
+			}
+		]
+	},
+	{
+		"key": "blockFundsKey",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "BlockedFund",
+				"description": "Provides the unique identifier assigned to a blocked fund entry."
+			}
+		]
+	},
+	{
+		"key": "accruedInterest",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "DepositBalanceResponse",
+				"description": "Reflects the total interest accrued to date on the deposit."
+			}
+		]
+	},
+	{
+		"key": "transactionCode",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Defines the code used to classify and identify the transaction type."
+			}
+		]
+	},
+	{
+		"key": "dormancyStatusDate",
+		"dataType": "string",
+		"description": "Records the date when the account’s dormancy status became effective or was last updated.",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse"
+			},
+			{
+				"usage": "AccountDetailsSuccessResponse"
+			}
+		]
+	},
+	{
+		"key": "bookingDate",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Captures the official booking date of the transaction in the bank’s records."
+			}
+		]
+	},
+	{
+		"key": "reversalIndicator",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Indicates whether the transaction represents a reversal of a prior entry."
+			}
+		]
+	},
+	{
+		"key": "transactionAmount",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Specifies the transaction value in the stated currency. Negative values denote debits; positive values denote credits."
+			}
+		]
+	},
+	{
+		"key": "productType",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse",
+				"description": "Represents the broader product group under which the account’s product is categorized."
+			}
+		]
+	},
+	{
+		"key": "valueDate",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Specifies the value date on which the transaction amount becomes effective for interest or settlement purposes."
+			}
+		]
+	},
+	{
+		"key": "subAccountProduct",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse",
+				"description": "Identifies the product assigned to the sub-account within the account structure."
+			}
+		]
+	},
+	{
+		"key": "activities",
+		"dataType": "array",
+		"contexts": [
+			{
+				"usage": "ActivityHistoryResponse",
+				"description": "Provides the list of activity records or entries associated with the account."
+			}
+		]
+	},
+	{
+		"key": "merchantCategoryCode",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountStatementSuccessResponse",
+				"description": "Defines the merchant category code (MCC) used to classify the merchant for the transaction."
+			}
+		]
+	},
+	{
+		"key": "dormancyStatus",
+		"dataType": "string",
+		"description": "Reflects the dormancy classification of the account (e.g., active, inactive, dormant, unclaimed), important for compliance.",
+		"contexts": [
+			{
+				"usage": "PartyAccountDetailsResponse"
+			},
+			{
+				"usage": "AccountDetailsSuccessResponse"
+			}
+		]
+	},
+	{
+		"key": "account",
+		"dataType": "string",
+		"contexts": [
+			{
+				"usage": "AccountsBlockFundsResponse",
+				"description": "Identifies the specific account in which funds are blocked, typically the account number."
+			}
+		]
+	}
+]

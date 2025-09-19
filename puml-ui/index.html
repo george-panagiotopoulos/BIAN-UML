@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIAN UML Visualizer</title>
+    <title>BIAN-Temenos modular mapping</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">BIAN UML Visualizer</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">BIAN-Temenos modular mapping</h1>
 
-        <!-- UML File Selection Section -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <!-- Tab Navigation -->
+        <div class="bg-white rounded-xl shadow-lg mb-8">
+            <div class="border-b border-gray-100">
+                <nav class="flex space-x-1 p-1" aria-label="Tabs">
+                    <button id="bianTab" class="tab-button active flex-1 py-3 px-6 text-sm font-semibold rounded-lg transition-all duration-200 bg-blue-500 text-white shadow-md">BIAN-Temenos modular mapping</button>
+                    <button id="dataModelTab" class="tab-button flex-1 py-3 px-6 text-sm font-semibold rounded-lg transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-gray-50">Temenos Business API/Data Model visualizer</button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- BIAN UML Tab Content -->
+        <div id="bianContent" class="tab-content">
+            <!-- UML File Selection Section -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Select UML Diagrams</h2>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6" id="diagramButtons">
                 <!-- Buttons will be dynamically generated -->
@@ -58,7 +70,7 @@
             </div>
         </div>
 
-        <!-- Instructions -->
+            <!-- Instructions -->
         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
             <h3 class="text-sm font-semibold text-blue-800 mb-2">How to Use:</h3>
             <ul class="text-sm text-blue-700 space-y-1">
@@ -68,6 +80,133 @@
                 <li>• Use "Clear Selection" to reset and start over</li>
                 <li>• Download generated diagrams as SVG or PNG files</li>
             </ul>
+            </div>
+        </div>
+
+        <!-- Temenos Business API/Data Model visualizer Tab Content -->
+        <div id="dataModelContent" class="tab-content hidden">
+            <!-- Sub-tab Navigation for Data Model -->
+            <div class="bg-white rounded-xl shadow-lg mb-8">
+                <div class="border-b border-gray-100">
+                    <nav class="flex space-x-1 p-1" aria-label="Data Model Tabs">
+                        <button id="dataModelVisualizationTab" class="data-model-tab-button active flex-1 py-2.5 px-4 text-sm font-medium rounded-lg transition-all duration-200 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg">Data Model Visualization</button>
+                        <button id="dataModelDocumentationTab" class="data-model-tab-button flex-1 py-2.5 px-4 text-sm font-medium rounded-lg transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-gray-50">Data Model Documentation</button>
+                        <button id="apiVocabularyTab" class="data-model-tab-button flex-1 py-2.5 px-4 text-sm font-medium rounded-lg transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-gray-50">API Vocabulary</button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Data Model Visualization Sub-tab -->
+            <div id="dataModelVisualizationContent" class="data-model-tab-content">
+                <div class="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-8 mb-8 border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-6 h-6 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        Temenos Modules
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="dataModelButtons">
+                        <!-- Data Model Buttons will be dynamically generated -->
+                    </div>
+                </div>
+
+                <!-- Data Model Visualization Area -->
+                <div class="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-8 border border-gray-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold text-gray-700">Data Model Visualization</h2>
+                        <div class="text-sm text-gray-500 server-status">
+                            <span class="inline-block w-2 h-2 bg-blue-400 rounded-full mr-1"></span>
+                            Local PlantUML: Checking...
+                        </div>
+                    </div>
+                    <div id="dataModelVisualizationArea" class="min-h-96 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-center p-8">
+                        <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                        <p class="text-gray-500 mb-2">Select a Temenos module to visualize its data model</p>
+                        <p class="text-xs text-gray-400">Shows logical data model diagrams for banking modules</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Model Documentation Sub-tab -->
+            <div id="dataModelDocumentationContent" class="data-model-tab-content hidden">
+                <div class="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-8 border border-gray-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Data Model Documentation
+                        </h2>
+                    </div>
+                    <div id="documentationArea" class="prose max-w-none">
+                        <div class="flex items-center justify-center h-32">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                            <span class="ml-2">Loading documentation...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Vocabulary Sub-tab -->
+            <div id="apiVocabularyContent" class="data-model-tab-content hidden">
+                <div class="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-8 mb-8 border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-6 h-6 text-purple-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        API Vocabulary
+                    </h2>
+                    <div class="flex flex-wrap gap-4 mb-6">
+                        <button id="downloadVocabularyBtn" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+                            </svg>
+                            Download Vocabulary
+                        </button>
+                        <button id="viewVocabularyBtn" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            View Vocabulary
+                        </button>
+                        <button id="searchVocabularyBtn" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Search Vocabulary
+                        </button>
+                    </div>
+
+                    <!-- Search Interface -->
+                    <div id="searchInterface" class="hidden mb-6">
+                        <div class="flex gap-2">
+                            <input type="text" id="vocabularySearchInput" placeholder="Search vocabulary..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="performSearchBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200">
+                                Search
+                            </button>
+                            <button id="clearSearchBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vocabulary Display Area -->
+                <div class="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-8 border border-gray-100">
+                    <div id="vocabularyArea" class="min-h-96">
+                        <div class="flex flex-col items-center justify-center h-32 text-center">
+                            <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            <p class="text-gray-500 mb-2">Click "View Vocabulary" to display the API vocabulary</p>
+                            <p class="text-xs text-gray-400">Use "Search Vocabulary" to find specific terms</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

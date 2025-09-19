@@ -19,6 +19,7 @@ app = Flask(__name__)
 # Configure paths
 BASE_DIR = Path(__file__).parent
 PUML_DIR = BASE_DIR.parent / "ModularLandscape" / "PUML"
+VOCABULARY_DIR = BASE_DIR.parent / "Vocabulary"
 STATIC_DIR = BASE_DIR
 PLANTUML_JAR = BASE_DIR.parent / "plantuml.jar"
 OUTPUT_DIR = BASE_DIR / "png"  # Local directory for PlantUML output
@@ -80,15 +81,44 @@ def serve_puml_file(filename):
     """Serve PUML files directly (for compatibility with existing JS)"""
     try:
         file_path = PUML_DIR / filename
-        
+
         if not file_path.exists():
             return f"File {filename} not found", 404
-        
+
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
-        
+
         return content, 200, {'Content-Type': 'text/plain; charset=utf-8'}
-    
+
+    except Exception as e:
+        return f"Error reading file: {str(e)}", 500
+
+@app.route('/Vocabulary/<filename>')
+def serve_vocabulary_file(filename):
+    """Serve Vocabulary files directly (for data models)"""
+    try:
+        file_path = VOCABULARY_DIR / filename
+
+        if not file_path.exists():
+            return f"File {filename} not found", 404
+
+        # Allow both .puml and other file types (.md, .json)
+        allowed_extensions = ['.puml', '.md', '.json']
+        if file_path.suffix not in allowed_extensions:
+            return f"Invalid file type", 400
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # Set appropriate content type
+        content_type = 'text/plain; charset=utf-8'
+        if file_path.suffix == '.json':
+            content_type = 'application/json; charset=utf-8'
+        elif file_path.suffix == '.md':
+            content_type = 'text/markdown; charset=utf-8'
+
+        return content, 200, {'Content-Type': content_type}
+
     except Exception as e:
         return f"Error reading file: {str(e)}", 500
 

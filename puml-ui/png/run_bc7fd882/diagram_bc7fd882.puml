@@ -1,0 +1,86 @@
+@startuml BIAN Cross Product Operations
+
+title BIAN Cross Product Operations Domains
+
+!define LAYOUT top to bottom direction
+
+' Row 1
+together {
+  package "Payments" as PAYMENTS {
+    class "Payment Services <color:#0000FF>(Temenos: Payments Hub)</color>" as PAY {
+      <color:#0000FF>Payment Order</color>
+      <color:#0000FF>Payment Execution</color>
+      <color:#0000FF>Financial Message Analysis</color>
+      Financial Gateway
+      Central Cash Handling
+      Card Financial Settlement
+      Card eCommerce Gateway
+      Card Clearing
+      ACH Operations
+      <color:#0000FF>Cheque Processing</color>
+      <color:#0000FF>Payment Instruction</color>
+      <color:#0000FF>Correspondent Bank Operations</color>
+      <color:#0000FF>Payment Rail Operations</color>
+      <color:#0000FF>Direct Debit Mandate</color>
+      <color:#0000FF>Direct Debit</color>
+      <color:#0000FF>Cheque Lock Box</color>
+      <color:#0000FF>Payment Initiation</color>
+    }
+    note right of PAY : <color:#FF0000>Available standalone - full modular architecture PI5/PI6</color>
+  }
+
+  package "Account Management" as ACCT_MGMT {
+    class "Account Services" as ACCT {
+      Reward Points Account
+      Product Combination
+      Position Management
+      Position Keeping
+      Fraud Evaluation
+      Fraud Diagnosis
+      Customer Position
+      Counterparty Risk
+      Accounts Receivable
+      Account Reconciliation
+      Securities Position Keeping
+      Transaction Engine
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Operational Services" as OPS_SVC {
+    class "Operations Support" as OPS {
+      Reward Points Awards And Redemption
+      Open Item Management
+      Leasing Item Administration
+      Issued Device Tracking
+      Issued Device Administration
+      <color:#0000FF>Disbursement (Temenos: Lending Module)</color>
+      Delinquent Account Handling
+      Channel Activity History
+      Channel Activity Analysis
+      Card Transaction Switch
+      Card Collections
+      Customer Billing
+      Processing Order
+    }
+  }
+
+  package "Collateral Administration" as COLLATERAL {
+    class "Collateral Services" as COL {
+      Collections
+      Collateral Asset Administration
+      Collateral Allocation Management
+      Party Asset Directory
+    }
+  }
+}
+
+' Layout positioning
+PAYMENTS -[hidden]right- ACCT_MGMT
+OPS_SVC -[hidden]right- COLLATERAL
+PAYMENTS -[hidden]down- OPS_SVC
+ACCT_MGMT -[hidden]down- COLLATERAL
+
+@enduml

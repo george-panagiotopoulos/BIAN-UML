@@ -1,0 +1,213 @@
+@startuml Combined BIAN Diagrams
+
+title Combined BIAN Architecture Domains
+
+!define LAYOUT top to bottom direction
+
+' === Cross Product Ops Domain ===
+' Row 1
+together {
+  package "Payments" as PAYMENTS {
+    class "Payment Services <color:#0000FF>(Temenos: Payments Hub)</color>" as PAY {
+      <color:#0000FF>Payment Order</color>
+      <color:#0000FF>Payment Execution</color>
+      <color:#0000FF>Financial Message Analysis</color>
+      Financial Gateway
+      Central Cash Handling
+      Card Financial Settlement
+      Card eCommerce Gateway
+      Card Clearing
+      ACH Operations
+      <color:#0000FF>Cheque Processing</color>
+      <color:#0000FF>Payment Instruction</color>
+      <color:#0000FF>Correspondent Bank Operations</color>
+      <color:#0000FF>Payment Rail Operations</color>
+      <color:#0000FF>Direct Debit Mandate</color>
+      <color:#0000FF>Direct Debit</color>
+      <color:#0000FF>Cheque Lock Box</color>
+      <color:#0000FF>Payment Initiation</color>
+    }
+    note right of PAY : <color:#FF0000>Available standalone - full modular architecture PI5/PI6</color>
+  }
+
+  package "Account Management" as ACCT_MGMT {
+    class "Account Services" as ACCT {
+      Reward Points Account
+      Product Combination
+      Position Management
+      Position Keeping
+      Fraud Evaluation
+      Fraud Diagnosis
+      Customer Position
+      Counterparty Risk
+      Accounts Receivable
+      Account Reconciliation
+      Securities Position Keeping
+      Transaction Engine
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Operational Services" as OPS_SVC {
+    class "Operations Support" as OPS {
+      Reward Points Awards And Redemption
+      Open Item Management
+      Leasing Item Administration
+      Issued Device Tracking
+      Issued Device Administration
+      <color:#0000FF>Disbursement (Temenos: Lending Module)</color>
+      Delinquent Account Handling
+      Channel Activity History
+      Channel Activity Analysis
+      Card Transaction Switch
+      Card Collections
+      Customer Billing
+      Processing Order
+    }
+  }
+
+  package "Collateral Administration" as COLLATERAL {
+    class "Collateral Services" as COL {
+      Collections
+      Collateral Asset Administration
+      Collateral Allocation Management
+      Party Asset Directory
+    }
+  }
+}
+
+' Layout positioning
+PAYMENTS -[hidden]right- ACCT_MGMT
+OPS_SVC -[hidden]right- COLLATERAL
+PAYMENTS -[hidden]down- OPS_SVC
+ACCT_MGMT -[hidden]down- COLLATERAL
+
+' === Products, Loans & Cards Domain ===
+' Row 1 - Deposits & Retail Lending
+together {
+  package "Deposits & Accounts" as DEP {
+    class "Deposits & Accounts <color:#0000FF>(Temenos: Deposits module)</color>" as DEP_SVC {
+      <color:#0000FF>Current Account</color>
+      <color:#0000FF>Savings Account</color>
+      <color:#0000FF>Term Deposit</color>
+      Term Deposit Framework Agreement
+      <color:#0000FF>Multicurrency Account</color>
+      <color:#0000FF>Standing Order</color>
+      Virtual Account
+      <color:#0000FF>Internal Bank Account</color>
+    }
+    note right of DEP_SVC : <color:#FF0000>Pilot PI1, MVP PI2</color>
+  }
+
+  package "Retail Lending" as RETAIL_LENDING_PKG {
+    class "Retail Lending <color:#0000FF>(Temenos: Lending module)</color>" as RETAIL_LENDING {
+      <color:#0000FF>Consumer Loan</color>
+      <color:#0000FF>Mortgage Loan</color>
+      <color:#0000FF>Merchandising Loan</color>
+      Leasing
+      Leasing Item Administration
+    }
+    note right of RETAIL_LENDING : <color:#FF0000>Pilot PI2, MVP PI3</color>
+  }
+}
+
+' Row 2 - Corporate Services
+together {
+  package "Corporate Deposits" as CORP_BANKING_PKG {
+    class "Corporate Deposits" as CORP {
+      Corporate Current Account
+      Cash Management And Account Services
+      Cash Concentration
+      Notional Pooling
+      Corporate Payroll Services
+      Fiduciary Agreement
+    }
+    note right of CORP : <color:#FF0000>Pilot PI3, MVP PI4/PI5</color>
+  }
+
+  package "Corporate Lending" as CORP_LENDING_PKG {
+    class "Corporate Lending" as CORP_LENDING {
+      Corporate Loan
+      Syndicated Loan
+      Project Finance
+      Corporate Lease
+      Loan Syndication
+    }
+    note right of CORP_LENDING : <color:#FF0000>MVP PI5/PI6</color>
+  }
+}
+
+' Row 3 - Risk & Cards
+together {
+  package "Limits & Collateral" as LIMITS_COLLATERAL_PKG {
+    class "Limits & Collateral" as LIMITS_COLLATERAL {
+      Credit Management
+      Collateral Asset Administration
+      Guarantee
+      Exposure Management
+      Credit Line Management
+      Credit Facility
+      Limit and Exposure Management
+    }
+    note right of LIMITS_COLLATERAL : <color:#FF0000>Future (beyond 2027)</color>
+  }
+
+  package "Cards" as CARDS {
+    class "Card Services" as CARD_SVC {
+      Credit Card
+      Card Authorization
+      Card Transaction Capture
+      Merchant Relations
+      Merchant Acquiring Facility
+      Card Network Participant Facility
+      Credit Card Position Keeping
+    }
+  }
+}
+
+' Row 4 - Financing & Trade
+together {
+  package "Corporate Financing and Advisory" as CORP_FIN {
+    class "Financing Services" as FIN_SVC {
+      Public Offering
+      Private Placement
+      Mergers and Acquisitions Advisory
+      Corporate Tax Advisory
+      Corporate Finance
+    }
+  }
+
+  package "Trade Banking" as TRADE {
+    class "Trade Finance" as TRADE_FIN {
+      Letter of Credit
+      Bank Guarantee
+      Factoring
+      Documentary Collections
+    }
+  }
+}
+
+' Layout positioning for 2x4 grid
+' Row 1 connections
+DEP -[hidden]right- RETAIL_LENDING_PKG
+
+' Row 2 connections
+CORP_BANKING_PKG -[hidden]right- CORP_LENDING_PKG
+
+' Row 3 connections
+LIMITS_COLLATERAL_PKG -[hidden]right- CARDS
+
+' Row 4 connections
+CORP_FIN -[hidden]right- TRADE
+
+' Vertical connections between rows
+DEP -[hidden]down- CORP_BANKING_PKG
+RETAIL_LENDING_PKG -[hidden]down- CORP_LENDING_PKG
+CORP_LENDING_PKG -[hidden]down- LIMITS_COLLATERAL_PKG
+CORP_BANKING_PKG -[hidden]down- CARDS
+LIMITS_COLLATERAL_PKG -[hidden]down- CORP_FIN
+CARDS -[hidden]down- TRADE
+
+@enduml

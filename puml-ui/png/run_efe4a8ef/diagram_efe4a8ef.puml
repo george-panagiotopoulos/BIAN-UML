@@ -1,0 +1,49 @@
+@startmindmap
+* Deposits Solution
+** Customer
+*** partyId
+*** partyRole
+*** channel
+*** dormancyStatus
+** Account
+*** accountId
+*** accountName
+*** accountBalance
+*** currency
+*** accountStatus
+*** openingDate
+*** branchCode
+*** companyCode
+*** Sub-Entities
+**** Transaction
+***** transactionReference
+***** transactionAmount
+***** paymentAmount
+***** valueDate
+**** SettlementInstruction
+***** payoutAccountId
+***** payInAccountId
+***** defaultBeneficiaryId
+**** BlockedFunds
+***** blockedReference
+***** blockedAmount
+***** startDate
+***** endDate
+**** PostingRestriction
+***** restrictionCode
+***** blockingReason
+**** OverdraftLimit
+***** overdraftLimitAmount
+***** overdraftAvailable
+** Deposit (extends Account)
+*** depositAmount
+*** depositTerm
+*** interestPayoutFrequency
+*** interestPayoutOption
+*** fundingAccount
+*** payoutAccount
+** Product
+*** productId
+*** productCode
+*** productType
+@endmindmap

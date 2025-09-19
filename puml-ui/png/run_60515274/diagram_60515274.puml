@@ -1,0 +1,142 @@
+@startuml Combined BIAN Diagrams
+
+title Combined BIAN Architecture Domains
+
+!define LAYOUT top to bottom direction
+
+' === Cross Product Ops Domain ===
+' Row 1
+together {
+  package "Payments" as PAYMENTS {
+    class "Payment Services" as PAY {
+      Payment Order
+      Payment Execution
+      Financial Message Analysis
+      Financial Gateway
+      Central Cash Handling
+      Card Financial Settlement
+      Card eCommerce Gateway
+      Card Clearing
+      ACH Operations
+      Cheque Processing
+      Payment Instruction
+      Correspondent Bank Operations
+      Payment Rail Operations
+      Direct Debit Mandate
+      Direct Debit
+      Cheque Lock Box
+      Payment Initiation
+    }
+  }
+
+  package "Account Management" as ACCT_MGMT {
+    class "Account Services" as ACCT {
+      Reward Points Account
+      Product Combination
+      Position Management
+      Position Keeping
+      Fraud Evaluation
+      Fraud Diagnosis
+      Customer Position
+      Counterparty Risk
+      Accounts Receivable
+      Account Reconciliation
+      Securities Position Keeping
+      Transaction Engine
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Operational Services" as OPS_SVC {
+    class "Operations Support" as OPS {
+      Reward Points Awards And Redemption
+      Open Item Management
+      Leasing Item Administration
+      Issued Device Tracking
+      Issued Device Administration
+      <color:#0000FF>Disbursement (Temenos: Lending Module)</color>
+      Delinquent Account Handling
+      Channel Activity History
+      Channel Activity Analysis
+      Card Transaction Switch
+      Card Collections
+      Customer Billing
+      Processing Order
+    }
+  }
+
+  package "Collateral Administration" as COLLATERAL {
+    class "Collateral Services" as COL {
+      Collections
+      Collateral Asset Administration
+      Collateral Allocation Management
+      Party Asset Directory
+    }
+  }
+}
+
+' Layout positioning
+PAYMENTS -[hidden]right- ACCT_MGMT
+OPS_SVC -[hidden]right- COLLATERAL
+PAYMENTS -[hidden]down- OPS_SVC
+ACCT_MGMT -[hidden]down- COLLATERAL
+
+' === Customer Servicing Domain ===
+' Row 1
+together {
+  package "Customer Management" as CUST_MGMT {
+    class "Customer Relationship" as CRM {
+      Customer Relationship Management
+      Customer Product And Service Eligibility
+      Customer Agreement
+      Sales Product Agreement
+      Customer Access En      Customer Behavior Insights
+      Customer Credit Rating
+      Account Recovery
+      Customer Event History
+      Customer Proposition
+      Customer Product and Service Directory
+    }
+
+    class "Party Management <color:#0000FF>(Temenos: Party module)</color>" as PARTY {
+      <color:#0000FF>Party Reference Data Directory</color>
+    }
+  }
+}
+
+' Row 2
+together {
+  package "Servicing" as SERVICING {
+    class "Servicing Services" as SVC {
+      Servicing Issue
+      Customer Case Management
+      Case Root Cause Analysis
+      Customer Case
+      Card Case
+      Servicing Order
+      Servicing Mandate
+    }
+  }
+
+  package "Consumer Services" as CONSUMER {
+    class "Consumer Banking" as CONS {
+      Corporate Trust Services
+      Currency Exchange
+      Bank Drafts
+      Brokered Product
+      Consumer Investments
+      Customer Tax Handling
+      Consumer Advisory Services
+      Trust Services
+    }
+  }
+}
+
+' Layout positioning
+SERVICING -[hidden]right- CONSUMER
+CUST_MGMT -[hidden]down- SERVICING
+CUST_MGMT -[hidden]down- CONSUMER
+
+@enduml
